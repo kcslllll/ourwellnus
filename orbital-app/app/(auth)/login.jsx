@@ -13,7 +13,7 @@ export default function LoginPage() {
     // Actions when Login button is pressed
     const handleSubmit = async () => {
         if (email == '') {
-            setErrMsg('NUS email.');
+            setErrMsg('Please fill in your NUS email.');
             return;
         }
 

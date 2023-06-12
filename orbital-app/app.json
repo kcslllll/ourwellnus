@@ -3,6 +3,7 @@
     "name": "orbital-app",
     "scheme": "orbital-app",
     "slug": "orbital-app",
+    "owner": "our-wellnus-team",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
