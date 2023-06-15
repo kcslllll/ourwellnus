@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   timeIcon: {
-    marginRight: 2,
+    marginRight: 1,
   },
   
 });
