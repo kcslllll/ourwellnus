@@ -20,7 +20,7 @@ function useProtectedRoute(user) {
         if (user == null && !inAuthGroup) {
             router.replace("/login");
         } else if (user != null && inAuthGroup) {
-            router.replace("/");
+            router.replace("/summary");
         }
         
     }, [router, segments, user]) // useEffect will only run if user status changes
