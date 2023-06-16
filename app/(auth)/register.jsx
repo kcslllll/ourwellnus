@@ -1,16 +1,35 @@
-import { View, StyleSheet} from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { Text, TextInput, Button, ActivityIndicator } from "react-native-paper";
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { useRouter } from "expo-router";
+import { Ionicons } from '@expo/vector-icons';
 
-export default function RegisterPage() {
+export default function Register() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [errMsg, setErrMsg] = useState('')
     const router = useRouter();
+    const {hidePassword, eyeIcon, handlePasswordVisibility} = useTogglePasswordVisibility();
+
+    function useTogglePasswordVisibility() {
+        const [hidePassword, setHidePassword] = useState(true);
+        const [eyeIcon, setEyeIcon] = useState('ios-eye-outline');
+
+        const handlePasswordVisibility = async () => {
+            if (eyeIcon === 'ios-eye-outline') {
+                setEyeIcon('ios-eye-off-outline');
+                setHidePassword(false);
+            } else if (eyeIcon === 'ios-eye-off-outline') {
+                setEyeIcon('ios-eye-outline');
+                setHidePassword(true);
+            }
+        };
+
+        return {hidePassword, eyeIcon, handlePasswordVisibility};
+    }
 
     // Actions when 'Create Account' button is pressed
     const handleRegister = async () => {
@@ -25,7 +44,7 @@ export default function RegisterPage() {
         }
 
         if (password == '') {
-            setErrMsg('Please fill in your password');
+            setErrMsg('Please fill in your password.');
             return;
         }
 
@@ -68,13 +87,16 @@ export default function RegisterPage() {
             />
             <Text style={{marginTop: 20}}>Password:</Text>
             <TextInput 
-                secureTextEntry
+                secureTextEntry={hidePassword}
                 autoCapitalize='none'
                 textContentType='password'
                 value={password}
                 onChangeText={setPassword}
                 clearButtonMode='always'
             />
+            <Pressable onPress={handlePasswordVisibility}>
+                <Ionicons name={eyeIcon} size={24} color="#232323"/>
+            </Pressable>
             {errMsg !== '' && <Text style={{color: 'purple'}}>{errMsg}</Text>}
             {loading && <ActivityIndicator />}
             <Button onPress={handleRegister} mode='elevated' style={styles.createContainer}>Create Account</Button>
@@ -84,9 +106,10 @@ export default function RegisterPage() {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: "white",
+        flex: 1,
         justifyContent: "center",
-        padding: 15,
-        backgroundColor: 'white'
+        padding: 14
     },
     createContainer: {
         marginBottom: 150,
