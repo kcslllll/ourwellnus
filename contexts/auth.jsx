@@ -22,6 +22,7 @@ function useProtectedRoute(user) {
         } else if (user != null && inAuthGroup) {
             router.replace("/");
         }
+        
     }, [router, segments, user]) // useEffect will only run if user status changes
 
 }
@@ -32,13 +33,15 @@ export function AuthProvider({ children }) {
 
     useEffect(() => {
         console.log(`AuthProvider useEffect called`);
-        const { data } = supabase.auth.onAuthStateChange((event, session) => {
+        const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
             // helps us obtain data of active users of the app
             console.log(`onAuthStateChange event: ${event}`);
             if (event === "SIGNED_IN") {
                 setUser(session.user);
             } else if (event === "SIGNED_OUT") {
                 setUser(null);
+            } else if (event === "PASSWORD_RECOVERY") {
+                setUser(session.user);
             }
         }) 
         return () => data.subscription.unsubscribe();
