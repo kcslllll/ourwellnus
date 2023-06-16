@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
+import { Button } from "react-native-paper";
 import { SafeAreaView, View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { Header } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-
+import { supabase } from "/home/ruo-x/our-wellnus/lib/supabase.js";
 
 const SummaryPage = () => {
   const navigation = useNavigation();
@@ -79,6 +79,7 @@ const SummaryPage = () => {
             {status}
           </Text>
         </View>
+        <Button onPress = {() => supabase.auth.signOut()}>Logout</Button>
       </ScrollView>
     </SafeAreaView>
   );
