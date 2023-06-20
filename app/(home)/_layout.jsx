@@ -9,7 +9,7 @@ import tracker from './tracker';
 
 const Tab = createBottomTabNavigator();
 
-function App() {
+function HomeLayout() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -42,4 +42,4 @@ function App() {
   );
 }
 
-export default App;
+export default HomeLayout;
