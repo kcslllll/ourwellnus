@@ -10,8 +10,8 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [errMsg, setErrMsg] = useState('')
-    const {hidePassword, eyeIcon, handlePasswordVisibility} = useTogglePasswordVisibility();
-    
+    const { hidePassword, eyeIcon, handlePasswordVisibility } = useTogglePasswordVisibility();
+
     function useTogglePasswordVisibility() {
         const [hidePassword, setHidePassword] = useState(true);
         const [eyeIcon, setEyeIcon] = useState('ios-eye-outline');
@@ -26,7 +26,7 @@ export default function Login() {
             }
         };
 
-        return {hidePassword, eyeIcon, handlePasswordVisibility};
+        return { hidePassword, eyeIcon, handlePasswordVisibility };
     }
 
 
@@ -49,7 +49,7 @@ export default function Login() {
 
         setLoading(true);
         // finding correct entry in our database
-        const { error } = await supabase.auth.signInWithPassword({email, password});
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
         setLoading(false);
         if (error) {
             setErrMsg(error.message);
@@ -59,35 +59,37 @@ export default function Login() {
 
     return (
         <View style={styles.container}>
-            <Text style={{marginTop: 100, fontSize: 20}}>Welcome,</Text>
-            <Text style={{fontSize: 58}}>Our WellNUS.</Text>
-            <Text style={{marginTop: 55, fontSize:16}}>NUS Email:</Text>
-            <TextInput 
+            <Text style={{ marginTop: 100, fontSize: 20 }}>Welcome,</Text>
+            <Text style={{ fontSize: 58 }}>Our WellNUS.</Text>
+            <Text style={{ marginTop: 55, fontSize: 16 }}>NUS Email:</Text>
+            <TextInput
                 autoCapitalize='none'
                 textContentType='emailAddress'
                 value={email}
                 onChangeText={setEmail}
                 clearButtonMode='always'
             />
-            <Text style={{marginTop: 20, fontSize:16}}>Password:</Text>
-            <TextInput 
+            <Text style={{ marginTop: 20, fontSize: 16 }}>Password:</Text>
+            <TextInput
                 secureTextEntry={hidePassword}
                 autoCapitalize='none'
                 textContentType='password'
                 value={password}
                 onChangeText={setPassword}
             />
-            <Pressable onPress={handlePasswordVisibility}>
-                <Ionicons name={eyeIcon} size={24} color="#232323"/>
-            </Pressable>
-            <Link href="/forgotPassword" style={{alignSelf:'flex-end'}}>
-                <Button>Forgot Password?</Button>
-            </Link>
-            {errMsg !== '' && <Text style={{color: 'purple'}}>{errMsg}</Text>}
+            <View style={styles.optionsContainer}>
+                <Link href="/forgotPassword" asChild>
+                    <Button>Forgot Password?</Button>
+                </Link>
+                <Pressable onPress={handlePasswordVisibility}>
+                    <Ionicons name={eyeIcon} size={24} color="#232323" />
+                </Pressable>
+            </View>
+            {errMsg !== '' && <Text style={{ color: 'purple' }}>{errMsg}</Text>}
             {loading && <ActivityIndicator />}
             <Button onPress={handleSubmit} mode='elevated' style={styles.loginContainer} >Login</Button>
-            <Text style={{marginTop: 110, alignSelf: 'center', fontSize: 16}}>New User?</Text>
-            <Link href = "/register" style={{alignSelf: "center"}}>
+            <Text style={{ marginTop: 100, alignSelf: 'center', fontSize: 16 }}>New User?</Text>
+            <Link href="/register" asChild style={{ alignSelf: "center" }}>
                 <Button>Register</Button>
             </Link>
         </View>
@@ -105,5 +107,9 @@ const styles = StyleSheet.create({
         marginTop: 10,
         width: 150,
         alignSelf: 'center'
+    },
+    optionsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     }
 })

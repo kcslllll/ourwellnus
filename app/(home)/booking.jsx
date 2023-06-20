@@ -2,15 +2,17 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 
 const BookingPage = () => {
   const navigation = useNavigation();
+  const router = useRouter();
 
   useEffect(() => {
     navigation.setOptions({
       headerShown: false, // Hide the header
     });
-  }, []);
+  }, [navigation]);
 
   const handleNextPage = () => {
     // Navigate to the next page
@@ -27,7 +29,7 @@ const BookingPage = () => {
           <Text style={styles.consultationTitle}>Consultation</Text>
         </View>
 
-        <TouchableOpacity style={styles.section} onPress={handleNextPage}>
+        <TouchableOpacity style={styles.section} onPress={() => router.push('/physicalQueue')}>
           <View style={styles.subSection}>
             <Text style={styles.subSectionTitle}>Physical Health</Text>
             <View style={styles.arrowBackground}>
@@ -36,7 +38,7 @@ const BookingPage = () => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.section} onPress={handleNextPage}>
+        <TouchableOpacity style={styles.section} onPress={() => router.push('/queueForm')}>
           <View style={styles.subSection}>
             <Text style={styles.subSectionTitle}>Mental Health</Text>
             <View style={styles.arrowBackground}>
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bookingText: {
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: 'bold',
     fontFamily: 'Trebuchet MS',
     textAlign: 'center',

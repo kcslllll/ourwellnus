@@ -5,9 +5,9 @@ import { Header } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { supabase } from "/home/ruo-x/our-wellnus/lib/supabase.js";
+import { supabase } from '../../lib/supabase';
 
-const SummaryPage = () => {
+export default function SummaryPage() {
   const navigation = useNavigation();
 
   const navigateToProfile = () => {
@@ -83,7 +83,7 @@ const SummaryPage = () => {
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   pageContainer: {
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   summaryText: {
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: 'bold',
     fontFamily: 'Trebuchet MS',
   },
@@ -166,5 +166,3 @@ const styles = StyleSheet.create({
   },
   
 });
-
-export default SummaryPage;
