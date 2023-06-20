@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -15,7 +15,7 @@ const BookingPage = () => {
   }, [navigation]);
 
   const handleNextPage = () => {
-    // Navigate to the next page
+    navigation.navigate('NewPage');
   };
 
   return (
