@@ -4,8 +4,7 @@ import { SafeAreaView, View, Text, StyleSheet, ScrollView, RefreshControl, Touch
 import { Header } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { supabase } from "/home/ruo-x/our-wellnus/lib/supabase.js";
+import { MaterialCommunityIcons } from '@expo/vector-icons';import { supabase } from "/home/ruo-x/our-wellnus/lib/supabase.js";
 
 const SummaryPage = () => {
   const navigation = useNavigation();
