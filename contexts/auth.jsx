@@ -18,9 +18,13 @@ function useProtectedRoute(user) {
         console.log('useProtectedRoute useEffect called');
         const inAuthGroup = segments[0] === "(auth)";
         if (user == null && !inAuthGroup) {
-            router.replace("/login");
+            router.replace("/userIdentity");
         } else if (user != null && inAuthGroup) {
-            router.replace("/summary");
+            if (user.email.slice(-10) == '@u.nus.edu') {
+                router.replace("/summary");
+            } else {
+                router.replace("/doctorHome");
+            }
         }
         
     }, [router, segments, user]) // useEffect will only run if user status changes

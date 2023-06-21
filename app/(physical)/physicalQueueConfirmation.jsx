@@ -3,14 +3,24 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../../lib/supabase";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
 
 export default function PhysicalQueueConfirmation() {
     const router = useRouter();
+    
     // To get the count of people in queue + 1
     const numberOfPeopleInQueue = async () => {
         const { data } = await supabase.functions()
         return { data };
     }
+    
+    const queueNumber = '5';
+
+    useEffect(() => {
+        if (queueNumber === '1') {
+            router.push('/waitingRoom');
+        }
+    },[queueNumber, router])
 
     const handleLeaveQueue = () => {
         // Remove user from queue table in database
@@ -23,7 +33,7 @@ export default function PhysicalQueueConfirmation() {
             <Text style={styles.headerText}>Physical Health Consultation</Text>
             <Text style={styles.subHeaderText}>Thank you for waiting! Your current position in the queue is:</Text>
             <View style={styles.roundedRectangle}>
-                <Text style={styles.numberText}>7</Text>
+                <Text style={styles.numberText}>{queueNumber}</Text>
             </View>
             <Text style={styles.normalText}>We will notify you when it is your turn!</Text>
             <Button mode='contained' style={{marginTop: 30}} labelStyle={{fontSize: 18}} onPress={handleLeaveQueue}>Leave Queue</Button>
