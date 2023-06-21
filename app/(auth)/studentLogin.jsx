@@ -5,7 +5,7 @@ import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { Ionicons } from '@expo/vector-icons';
 
-export default function Login() {
+export default function StudentLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -59,9 +59,9 @@ export default function Login() {
 
     return (
         <View style={styles.container}>
-            <Text style={{ marginTop: 100, fontSize: 20 }}>Welcome,</Text>
+            <Text style={{ marginTop: 30, fontSize: 20 }}>Welcome to,</Text>
             <Text style={{ fontSize: 58 }}>Our WellNUS.</Text>
-            <Text style={{ marginTop: 55, fontSize: 16 }}>NUS Email:</Text>
+            <Text style={{ marginTop: 100, fontSize: 16 }}>NUS Email:</Text>
             <TextInput
                 autoCapitalize='none'
                 textContentType='emailAddress'
@@ -88,7 +88,7 @@ export default function Login() {
             {errMsg !== '' && <Text style={{ color: 'purple' }}>{errMsg}</Text>}
             {loading && <ActivityIndicator />}
             <Button onPress={handleSubmit} mode='elevated' style={styles.loginContainer} >Login</Button>
-            <Text style={{ marginTop: 100, alignSelf: 'center', fontSize: 16 }}>New User?</Text>
+            <Text style={{ marginTop: 120, alignSelf: 'center', fontSize: 16 }}>New User?</Text>
             <Link href="/register" asChild style={{ alignSelf: "center" }}>
                 <Button>Register</Button>
             </Link>
@@ -104,9 +104,10 @@ const styles = StyleSheet.create({
         padding: 14
     },
     loginContainer: {
-        marginTop: 10,
+        marginTop: 20,
         width: 150,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        marginBottom: 10
     },
     optionsContainer: {
         flexDirection: 'row',
