@@ -1,16 +1,9 @@
 import { StyleSheet } from "react-native";
 import { Text, Button } from "react-native-paper";
-import { Link } from "expo-router";
-import { useNavigation } from '@react-navigation/native';
+import { Link, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function UserIdentity() {
-    const navigation = useNavigation();
-
-    navigation.setOptions({
-        headerShown: false, // Hide the header
-      });    
-
     return (
         <SafeAreaView style={styles.container}>
             <Text style={{ marginTop: 50, fontSize: 20 }}>Welcome to,</Text>
