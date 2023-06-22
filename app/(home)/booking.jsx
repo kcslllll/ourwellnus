@@ -14,10 +14,6 @@ const BookingPage = () => {
     });
   }, [navigation]);
 
-  const handleNextPage = () => {
-    navigation.navigate('NewPage');
-  };
-
   return (
     <SafeAreaView style={styles.pageContainer}>
       <View style={styles.container}>
@@ -51,7 +47,7 @@ const BookingPage = () => {
           <Text style={styles.collectionTitle}>Collection</Text>
         </View>
 
-        <TouchableOpacity style={styles.section} onPress={handleNextPage}>
+        <TouchableOpacity style={styles.section} onPress={() => router.push('/medicationcollection')}>
           <View style={styles.subSection}>
             <Text style={styles.subSectionTitle}>Medication Collection</Text>
             <View style={styles.arrowBackground}>
@@ -103,14 +99,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'Georgia',
     color: 'blue',
-    fontSize: 20,
+    fontSize: 24,
     marginBottom: 10,
   },
   collectionTitle: {
     fontWeight: 'bold',
     fontFamily: 'Georgia',
     color: 'blue',
-    fontSize: 20,
+    fontSize: 24,
     marginTop: 20,
     marginBottom: 10,
   },
@@ -122,7 +118,7 @@ const styles = StyleSheet.create({
   },
   subSectionTitle: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 18,
   },
   arrowBackground: {
     backgroundColor: 'white',
