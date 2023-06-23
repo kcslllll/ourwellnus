@@ -13,7 +13,11 @@
     "metro-resolver": "0.76.0"
   },
   "dependencies": {
+    "@config-plugins/react-native-webrtc": "^6.0.0",
+    "@daily-co/config-plugin-rn-daily-js": "^0.0.2",
     "@daily-co/daily-react-hooks": "^0.5.0",
+    "@daily-co/react-native-daily-js": "^0.44.0",
+    "@daily-co/react-native-webrtc": "111.0.0-daily.1",
     "@expo/vector-icons": "^13.0.0",
     "@react-native-async-storage/async-storage": "1.17.11",
     "@react-navigation/bottom-tabs": "^6.5.7",
@@ -23,6 +27,7 @@
     "@supabase/supabase-js": "^2.23.0",
     "expo": "^48.0.19",
     "expo-constants": "~14.2.1",
+    "expo-dev-client": "~2.2.1",
     "expo-image-picker": "~14.1.1",
     "expo-linking": "~4.0.1",
     "expo-router": "^1.5.3",
@@ -30,6 +35,7 @@
     "expo-updates": "~0.16.4",
     "react": "18.2.0",
     "react-native": "0.71.8",
+    "react-native-background-timer": "^2.4.1",
     "react-native-dropdown-select-list": "^2.0.4",
     "react-native-elements": "^3.4.3",
     "react-native-paper": "^5.8.0",

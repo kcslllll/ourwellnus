@@ -14,7 +14,7 @@ export default function PhysicalQueueConfirmation() {
         return { data };
     }
     
-    const queueNumber = '5';
+    const queueNumber = '1';
 
     useEffect(() => {
         if (queueNumber === '1') {
