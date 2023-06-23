@@ -4,15 +4,18 @@ import { Button } from "react-native-paper";
 import { Link } from "expo-router";
 
 export default function DoctorStart() {
+
+
     // should be the info of first user in the queue
     const userName = 'Lee Ruo Xuan';
     const userEmail = 'iloveapples@gmail.com';
 
     const handleStartCall = async () => {
         // should do the following:
-        // create room for call
+        // create room for call and join call automatically
+
         // send call URL to patient's email
-        // deleting patient from the queue
+        
     }
 
     return (
@@ -47,7 +50,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     subheaderText: {
-        marginTop: 130,
+        marginTop: 100,
         paddingHorizontal: 20,
         fontSize: 18,
         fontWeight: 'bold',
@@ -73,6 +76,6 @@ const styles = StyleSheet.create({
     startContainer: {
         width: 200,
         alignSelf: 'center',
-        marginTop: 50
+        marginTop: 70,
     }
 })
