@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 export default function DoctorCall() {
     return (
         <SafeAreaView style={styles.pageContainer}>
-
+            
         </SafeAreaView>
     )
 }
