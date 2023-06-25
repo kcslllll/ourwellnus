@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function ModeOfCollection() {
   const router = useRouter();
@@ -22,6 +23,9 @@ export default function ModeOfCollection() {
 
   return (
     <SafeAreaView style={styles.pageContainer}>
+      <TouchableOpacity style={styles.backContainer} onPressIn={() => router.back()}>
+        <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
+      </TouchableOpacity>
       <Text style={styles.headerText}>Medication Collection</Text>
       <Text style={styles.subHeaderText}>Select mode of collection...</Text>
       <TouchableOpacity
@@ -67,8 +71,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#e9d3ff",
     alignItems: "center",
   },
+  backContainer: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 20,
+    marginTop: 10
+  },
   headerText: {
-    marginTop: 40,
+    marginTop: 20,
     fontSize: 40,
     fontWeight: "bold",
     fontFamily: "Trebuchet MS",
@@ -80,7 +89,7 @@ const styles = StyleSheet.create({
     fontFamily: "Georgia",
     marginLeft: 40,
     marginBottom: 20,
-    marginTop: 100,
+    marginTop: 80,
     alignSelf: "flex-start",
   },
   checkboxContainer: {

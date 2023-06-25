@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function SPUCollection() {
   const [selectedDate, setSelectedDate] = useState(new Date()); // Default to the current date
@@ -26,6 +27,9 @@ export default function SPUCollection() {
 
   return (
     <SafeAreaView style={styles.pageContainer}>
+      <TouchableOpacity style={styles.backContainer} onPressIn={() => router.back()}>
+        <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
+      </TouchableOpacity>
       <Text style={styles.headerText}>Medication Collection</Text>
       <View style={styles.modeContainer}>
         <Text style={styles.modeText}>Mode of collection: Self Pick-Up</Text>
@@ -80,8 +84,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#e9d3ff",
     alignItems: "center",
   },
+  backContainer: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 20,
+    marginTop: 10
+  },
   headerText: {
-    marginTop: 40,
+    marginTop: 20,
     fontSize: 40,
     fontWeight: "bold",
     fontFamily: "Trebuchet MS",
