@@ -3,13 +3,13 @@ import { StyleSheet, Text } from "react-native";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 
-export default function DoctorCall() {
+export default function UserCall() {
     const router = useRouter();
 
     return (
         <SafeAreaView style={styles.pageContainer}>
             <Text> This is the call page.</Text>
-            <Button onPress={() => router.push("/doctorHome")}>Leave Call</Button>
+            <Button onPress={() => router.push("/endOfCall")}>Leave Call</Button>
         </SafeAreaView>
     )
 }
