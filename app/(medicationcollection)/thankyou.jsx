@@ -6,54 +6,58 @@ import { useRouter } from "expo-router";
 
 export default function MedicationCollection() {
     const router = useRouter();
-    
-    const handleHomePage = () => {
-        router.push('/summary.jsx');
-    }
 
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <Text style={styles.subHeaderText}>thank you for your confirmation!</Text>
-            <Button 
-                mode='contained' style={{ marginTop: 40, backgroundColor: 'green', justifyContent: 'center', height: 60}} 
-                labelStyle={{ fontSize: 21 }} 
-                onPress={handleHomePage}
-            >
-                Home!
-            </Button>
+          <Text style={styles.subHeaderText}>
+            Thank you for your {'\n'}
+            confirmation, and {'\n'}
+            we hope to see {'\n'}
+            you soon!
+          </Text>
+          <Text style={styles.additionalText}>Please come within your stipulated {'\n'}
+          timing, thank you!</Text>
+          <Button
+            mode="contained"
+            style={styles.button}
+            labelStyle={styles.buttonLabel}
+            onPress={() => router.push('/summary')}
+          >
+            Back to home
+          </Button>
         </SafeAreaView>
-    )
-}
+      );
+    }
+
 
 const styles = StyleSheet.create({
-    pageContainer: {
-        flex: 1,
-        backgroundColor: '#e9d3ff',
-        alignItems: 'center'
-    },
-    headerText: {
-        marginTop: 40,
-        fontSize: 40,
-        fontWeight: 'bold',
-        fontFamily: 'Trebuchet MS',
-        textAlign: 'center',
-    },
-    subHeaderText: {
-        fontSize: 18,
-        fontWeight: '300',
-        fontFamily: 'Trebuchet MS',
-        marginBottom: 20,
-        marginTop: 170,
-        textAlign: 'center'
-    },
-    roundedRectangle: {
-        width: 130,
-        height: 110,
-        backgroundColor: "#ffffff",
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-        borderBottomLeftRadius: 10,
-        borderBottomRightRadius: 10,
-        justifyContent: 'center'
-    },
-})
+  pageContainer: {
+    flex: 1,
+    backgroundColor: "#e9d3ff",
+    alignItems: "center",
+  },
+  subHeaderText: {
+    fontSize: 25,
+    fontWeight: "bold",
+    fontFamily: "Trebuchet MS",
+    marginBottom: 50,
+    marginTop: 200,
+    textAlign: "center",
+  },
+  additionalText: {
+    fontSize: 18,
+    fontFamily: "Trebuchet MS",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  button: {
+    marginTop: 40,
+    backgroundColor: "green",
+    justifyContent: "center",
+    height: 60,
+    width: 160,
+  },
+  buttonLabel: {
+    fontSize: 17,
+  },
+});
