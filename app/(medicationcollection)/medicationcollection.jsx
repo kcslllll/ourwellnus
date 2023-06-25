@@ -1,8 +1,9 @@
-import { Text, StyleSheet } from "react-native";
+import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 //import { supabase } from "../../lib/supabase";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function MedicationCollection() {
     const router = useRouter();
@@ -13,6 +14,9 @@ export default function MedicationCollection() {
 
     return (
         <SafeAreaView style={styles.pageContainer}>
+            <TouchableOpacity style={styles.backContainer} onPressIn={() => router.back()}>
+                <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
+            </TouchableOpacity>
             <Text style={styles.headerText}>Medication Collection</Text>
             <Text style={styles.subHeaderText}>In order to help you recover as soon {'\n'} 
             as possible, we have prescribed you with {'\n'}
@@ -37,8 +41,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#e9d3ff',
         alignItems: 'center'
     },
+    backContainer: {
+        alignSelf: 'flex-start',
+        paddingHorizontal: 20,
+        marginTop: 10
+    },
     headerText: {
-        marginTop: 40,
+        marginTop: 20,
         fontSize: 40,
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',
@@ -49,7 +58,7 @@ const styles = StyleSheet.create({
         fontWeight: '300',
         fontFamily: 'Trebuchet MS',
         marginBottom: 20,
-        marginTop: 170,
+        marginTop: 100,
         textAlign: 'center'
     },
     roundedRectangle: {
