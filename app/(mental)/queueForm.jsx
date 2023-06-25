@@ -1,11 +1,14 @@
-import { Text, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SelectList, MultipleSelectList } from "react-native-dropdown-select-list";
 import { useState } from "react";
 import { Button } from "react-native-paper";
 import { Link } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function QueueForm() {
+    const router = useRouter();
     const [selected, setSelected] = useState('');
     const [data, setData] = useState(null);
 
@@ -33,6 +36,9 @@ export default function QueueForm() {
 
     return (
         <SafeAreaView style={styles.pageContainer}>
+            <Pressable style={styles.backContainer} onPressIn={() => router.back()}>
+                <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
+            </Pressable>
             <Text style={styles.headerText}>Mental Health Consultation</Text>
             <View style={styles.questionContainer}>
                 <Text style={styles.questionText}>Select your preferred therapist:</Text>
@@ -68,8 +74,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#e9d3ff',
     },
+    backContainer: {
+        alignSelf: 'flex-start',
+        paddingHorizontal: 20,
+        marginTop: 10
+    },
     headerText: {
-        marginTop: 40,
+        marginTop: 20,
         fontSize: 40,
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',

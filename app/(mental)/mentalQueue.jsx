@@ -1,8 +1,10 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../../lib/supabase";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+
 
 export default function MentalQueue() {
     const router = useRouter();
@@ -19,6 +21,9 @@ export default function MentalQueue() {
 
     return (
         <SafeAreaView style={styles.pageContainer}>
+            <Pressable style={styles.backContainer} onPressIn={() => router.back()}>
+                <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
+            </Pressable>
             <Text style={styles.headerText}>Mental Health Consultation</Text>
             <View style={styles.confirmationContainer}>
                 <Text style={styles.confirmationText}>Confirmation:</Text>
@@ -42,8 +47,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#e9d3ff',
         alignItems: 'center'
     },
+    backContainer: {
+        alignSelf: 'flex-start',
+        paddingHorizontal: 20,
+        marginTop: 10
+    },
     headerText: {
-        marginTop: 40,
+        marginTop: 20,
         fontSize: 40,
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',

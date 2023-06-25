@@ -1,5 +1,5 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Alert, StyleSheet, Text, TextInput } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, Keyboard, TouchableWithoutFeedback, View } from "react-native";
 import { useState } from "react";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
@@ -8,41 +8,37 @@ export default function WaitingRoom() {
     const router = useRouter();
     const [callUrl, setcallUrl] = useState('');
 
-    const handleJoinCall = async () => {
-        // Join call with URL
-        // Deletes user from the queue database
-
-        router.push('/physicalCall');
-    }
-
     const handleLeaveRoom = async () => {
         // Ends call on doctor's side with a notification for doctor
         // Alert to double confirm on choice
-        // Deletes user from the queue database
-        Alert.alert(  
-            'Are you sure?',  
-            'You will lose your position in the queue.',  
-            [  
-                {  
-                    text: 'Cancel',  
-                    onPress: () => console.log('Alert Cancel Pressed'),  
-                    style: 'cancel',  
-                },  
-                {   text: 'Leave Queue', 
+        Alert.alert(
+            'Are you sure?',
+            'You will have to queue again to come back to this page.',
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Alert Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {
+                    text: 'Leave Room',
                     onPress: () => router.push('/physicalQueue'),
-                },  
-            ]  
-        );  
-
-    }
+                },
+            ]
+        );
+    };
 
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <Text style={styles.headerText}>Waiting Room</Text>
-            <Text style={styles.normalText}>
-                The doctor is preparing for your consultation. An email with the call link will be sent to you shortly.
-            </Text>
-            <Text style={styles.normalText}>Call URL:</Text>
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+                <View>
+                    <Text style={styles.headerText}>Waiting Room</Text>
+                    <Text style={styles.normalText}>
+                        The doctor is preparing for your consultation. An email with the call link will be sent to you shortly.
+                    </Text>
+                    <Text style={styles.normalText}>Call URL:</Text>
+                </View>
+            </TouchableWithoutFeedback>
             <TextInput
                 style={styles.input}
                 value={callUrl}
@@ -50,8 +46,23 @@ export default function WaitingRoom() {
                 placeholder="Paste your link here"
                 multiline={true}
             />
-            <Button mode='contained' style={styles.firstButton} onPress={handleJoinCall} labelStyle={{fontSize: 18}}>Join Call</Button>
-            <Button mode='contained' style={styles.secondButton} onPress={handleLeaveRoom} labelStyle={{fontSize: 18}}>Leave Room</Button>
+            <Button
+                mode='contained'
+                style={styles.firstButton}
+                onPress={handleJoinCall}
+                labelStyle={{ fontSize: 18 }}
+                disabled={(callUrl === '') ? true : false}
+            >
+                Join Call
+            </Button>
+            <Button
+                mode='contained'
+                style={styles.secondButton}
+                onPress={handleLeaveRoom}
+                labelStyle={{ fontSize: 18 }}
+            >
+                Leave Room
+            </Button>
         </SafeAreaView>
     )
 }

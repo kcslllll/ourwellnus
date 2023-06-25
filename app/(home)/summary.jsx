@@ -14,9 +14,11 @@ export default function SummaryPage() {
     navigation.navigate('profilepage');
   };
 
-  navigation.setOptions({
-    headerShown: false, // Hide the header
-  });
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false, // Hide the header
+    });
+  }, [navigation]);
 
   const [historyLog, setHistoryLog] = useState('');
   const [status, setStatus] = useState('');
