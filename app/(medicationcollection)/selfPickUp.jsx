@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
@@ -24,6 +24,8 @@ export default function SPUCollection() {
   const handleTimeChange = (value) => {
     setSelectedTime(value);
   };
+
+  const isNextButtonDisabled = !selectedTime; // Check if timeslot has been chosen
 
   return (
     <SafeAreaView style={styles.pageContainer}>
@@ -71,6 +73,7 @@ export default function SPUCollection() {
         style={styles.button}
         labelStyle={styles.buttonLabel}
         onPress={handleConfirmationPage}
+        disabled={isNextButtonDisabled} // Disable the button if timeslot is not chosen
       >
         Next
       </Button>
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 40,
-    backgroundColor: "blue",
+    backgroundColor: "grey",
     justifyContent: "center",
     height: 60,
     width: 160,

@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Button } from "react-native-paper";
 import { SafeAreaView, View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { Header } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { supabase } from '../../lib/supabase';
 
 export default function SummaryPage() {
   const navigation = useNavigation();
