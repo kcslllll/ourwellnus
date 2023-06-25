@@ -1,13 +1,20 @@
 import { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function DeliveryCollection() {
-  const [selectedDate, setSelectedDate] = useState(new Date()); // Default to current date
+  const [selectedDate, setSelectedDate] = useState(new Date()); // Default to the current date
   const [selectedTime, setSelectedTime] = useState(null);
+  const router = useRouter();
+
+  const handleConfirmationPage = () => {
+    router.push("/confirmation");
+  };
 
   const handleDateChange = (event, selected) => {
     const currentDate = selected || selectedDate;
@@ -18,8 +25,13 @@ export default function DeliveryCollection() {
     setSelectedTime(value);
   };
 
+  const isNextButtonDisabled = !selectedTime; // Check if timeslot has been chosen
+
   return (
     <SafeAreaView style={styles.pageContainer}>
+      <TouchableOpacity style={styles.backContainer} onPressIn={() => router.back()}>
+        <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
+      </TouchableOpacity>
       <Text style={styles.headerText}>Medication Collection</Text>
       <View style={styles.modeContainer}>
         <Text style={styles.modeText}>Mode of collection: Delivery</Text>
@@ -60,6 +72,8 @@ export default function DeliveryCollection() {
         mode="contained"
         style={styles.button}
         labelStyle={styles.buttonLabel}
+        onPress={handleConfirmationPage}
+        disabled={isNextButtonDisabled} // Disable the button if timeslot is not chosen
       >
         Next
       </Button>
@@ -73,8 +87,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#e9d3ff",
     alignItems: "center",
   },
+  backContainer: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 20,
+    marginTop: 10
+  },
   headerText: {
-    marginTop: 40,
+    marginTop: 20,
     fontSize: 40,
     fontWeight: "bold",
     fontFamily: "Trebuchet MS",
@@ -105,7 +124,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 40,
-    backgroundColor: "blue",
+    backgroundColor: "grey",
     justifyContent: "center",
     height: 60,
     width: 160,

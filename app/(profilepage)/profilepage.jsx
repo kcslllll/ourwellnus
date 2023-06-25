@@ -1,11 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-paper';
 import { supabase } from '../../lib/supabase';
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 const ProfilePage = () => {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.backContainer} onPressIn={() => router.back()}>
+        <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
+      </TouchableOpacity>
       <Text style={styles.text}></Text>
       <Button
         onPress={() => supabase.auth.signOut()}
@@ -23,6 +30,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backContainer: {
+    position: 'absolute',
+    top: 50,
+    left: 10,
+    paddingHorizontal: 20,
   },
   text: {
     fontSize: 24,
@@ -42,4 +55,3 @@ const styles = StyleSheet.create({
 });
 
 export default ProfilePage;
-
