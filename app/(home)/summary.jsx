@@ -3,16 +3,14 @@ import { Button } from "react-native-paper";
 import { SafeAreaView, View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { Header } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 
 export default function SummaryPage() {
   const navigation = useNavigation();
-
-  const navigateToProfile = () => {
-    navigation.navigate('profilepage');
-  };
+  const router = useRouter();
 
   useEffect(() => {
     navigation.setOptions({
@@ -54,7 +52,7 @@ export default function SummaryPage() {
           <Text style={styles.summaryText}>Summary</Text>
         </View>
 
-        <TouchableOpacity style={styles.profileButton} onPress={navigateToProfile}>
+        <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/profilepage')}>
           <Ionicons name="person-circle-outline" size={30} color="black" />
         </TouchableOpacity>
 
@@ -81,7 +79,6 @@ export default function SummaryPage() {
             {status}
           </Text>
         </View>
-        <Button onPress = {() => supabase.auth.signOut()}>Logout</Button>
       </ScrollView>
     </SafeAreaView>
   );
