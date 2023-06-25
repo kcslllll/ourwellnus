@@ -1,14 +1,16 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function DoctorStart() {
-
+    const router = useRouter();
 
     // should be the info of first user in the queue
-    const userName = 'Lee Ruo Xuan';
-    const userEmail = 'iloveapples@gmail.com';
+    const userName = 'first patient name';
+    const userEmail = 'first patient email';
 
     const handleStartCall = async () => {
         // should do the following:
@@ -20,6 +22,9 @@ export default function DoctorStart() {
 
     return (
         <SafeAreaView style={styles.pageContainer}>
+            <Pressable style={styles.backContainer} onPressIn={() => router.back()}>
+                <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
+            </Pressable>
             <Text style={styles.headerText}>Virtual Consultations</Text>
             <Text style={styles.subheaderText}>Patient Information:</Text>
             <Text style={styles.normalText}>Name:</Text>
@@ -42,9 +47,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#e9d3ff',
     },
+    backContainer: {
+        paddingHorizontal: 10
+    },
     headerText: {
-        marginTop: 50,
-        fontSize: 32,
+        marginTop: 60,
+        fontSize: 34,
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',
         alignSelf: 'center'

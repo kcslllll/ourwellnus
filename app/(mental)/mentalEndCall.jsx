@@ -10,21 +10,13 @@ export default function UserCall() {
         <SafeAreaView style={styles.pageContainer}>
             <Text style={styles.headerText}>Your call has ended!</Text>
             <Text style={styles.normalText}>
-                Thank you for using Our WellNUS. Before you go, do remember to book a specific time slot for you to collect your medication, if necessary.
+                Hope you had a fruitful experience! We are always here to lend a ear.
             </Text>
-            <Button
-                mode="contained"
-                labelStyle={{fontSize: 18}}
-                style={styles.firstButton}
-                onPress={() => router.replace('/medicationcollection')}
-            >
-                Book a Time Slot
-            </Button>
             <Button  
                 mode="contained" 
                 labelStyle={{fontSize: 18}}
-                style={styles.secondButton}
-                onPress={() => router.replace('/summary')}
+                style={styles.homeButton}
+                onPress={() => router.push('/summary')}
             >
                 Back to Home
             </Button>
@@ -40,7 +32,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16
     },
     headerText: {
-        marginTop: 230,
+        marginTop: 270,
         fontSize: 36,
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',
@@ -51,13 +43,10 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontFamily: 'Trebuchet MS',
         textAlign: 'center',
+        paddingHorizontal: 20,
     },
-    firstButton: {
+    homeButton: {
         width: 250,
-        marginTop: 50,
-    },
-    secondButton: {
-        width: 250,
-        marginTop: 20,
+        marginTop: 40,
     }
 })
