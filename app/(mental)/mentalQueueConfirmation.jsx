@@ -1,32 +1,114 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Alert, ScrollView, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../../lib/supabase";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { useEffect, useState, useCallback } from "react";
+import { useAuth } from "../../contexts/auth";
 
 export default function MentalQueueConfirmation() {
     const router = useRouter();
-    // To get the count of people in queue + 1
-    const numberOfPeopleInQueue = async () => {
-        const { data } = await supabase.functions()
-        return { data };
-    }
+    const [position, setPosition] = useState(null);
+    const [joinTime, setJoinTime] = useState(null);
+    const [refreshing, setRefreshing] = useState(false);
+    const { user } = useAuth();
 
-    const handleLeaveQueue = () => {
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+          setRefreshing(false);
+        }, 500);
+      }, []);
+
+    useEffect(() => {
+        // get position of user in the queue database
+        async function fetchJoinTime() {
+            const { data } = await supabase.from('mental_queue').select('joined_at').eq('user_id', user.id)
+            console.log(data);
+            setJoinTime(data[0].joined_at);
+        }
+        fetchJoinTime();
+    }, [user.id])
+
+    useEffect(() => {
+        async function fetchPosition() {
+            const { data } = await supabase.from('mental_queue').select('joined_at').lt('joined_at', joinTime);
+            if (data !== null) {
+                console.log(data.length);
+                setPosition(data.length + 1);
+            }
+        }
+        fetchPosition();
+    },[refreshing, joinTime])
+
+    useEffect(() => {
+        async function DeleteUser() {
+            const { error } = await supabase.from('mental_queue').delete().eq('user_id', user.id)
+            if (error) {
+                console.log(error.message);
+            }
+            return;
+        }
+
+        if (position === 1) {
+            DeleteUser();
+            router.replace('/mentalWaitingRoom');
+        }
+    },[position, router, user.id])
+
+    const handleLeaveQueue = async () => {
         // Remove user from queue table in database
 
-        router.push('/mentalQueue');
+        async function LeaveQueue() {
+            const { error } = await supabase
+                .from('mental_queue')
+                .delete()
+                .eq('user_id', user.id)
+            if (error) {
+                console.log(error.message);
+                return;
+            } else {
+                router.replace("/queueForm");
+                return;
+            }
+        }
+
+        Alert.alert(
+            'Are you sure?',
+            'You will lose your position in the queue.',
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Alert Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {
+                    text: 'Leave Queue',
+                    onPress: () => LeaveQueue(),
+                },
+            ]
+        );
     }
 
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <Text style={styles.headerText}>Mental Health Consultation</Text>
-            <Text style={styles.subHeaderText}>Thank you for waiting! Your current position in the queue is:</Text>
-            <View style={styles.roundedRectangle}>
-                <Text style={styles.numberText}>7</Text>
-            </View>
-            <Text style={styles.normalText}>We will notify you when it is your turn!</Text>
-            <Button mode='contained' style={{marginTop: 30}} labelStyle={{fontSize: 18}} onPress={handleLeaveQueue}>Leave Queue</Button>
+            <ScrollView 
+                contentContainerStyle={styles.pageContainer}
+                refreshControl={
+                    <RefreshControl 
+                        refreshing={refreshing} 
+                        onRefresh={onRefresh}
+                    />
+                }
+            >
+                <Text style={styles.headerText}>Mental Health Consultation</Text>
+                <Text style={styles.subHeaderText}>Thank you for waiting! Your current position in the queue is:</Text>
+                <View style={styles.roundedRectangle}>
+                    <Text style={styles.numberText}>{position}</Text>
+                </View>
+                <Text style={styles.normalText}>We will notify you when it is your turn!</Text>
+                <Button mode='contained' style={{ marginTop: 30 }} labelStyle={{ fontSize: 18 }} onPress={handleLeaveQueue}>Leave Queue</Button>
+            </ScrollView>
         </SafeAreaView>
     )
 }
@@ -45,19 +127,19 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     subHeaderText: {
-        fontSize: 18, 
+        fontSize: 18,
         fontWeight: '300',
         fontFamily: 'Trebuchet MS',
-        marginBottom: 30, 
-        marginTop: 90, 
+        marginBottom: 30,
+        marginTop: 110,
         textAlign: 'center',
         padding: 10
     },
     normalText: {
-        fontSize: 18, 
+        fontSize: 18,
         fontWeight: '300',
         fontFamily: 'Trebuchet MS',
-        marginTop: 30, 
+        marginTop: 30,
         textAlign: 'center',
     },
     roundedRectangle: {

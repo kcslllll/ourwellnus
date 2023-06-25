@@ -7,18 +7,17 @@ import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
+
 export default function QueueForm() {
     const router = useRouter();
-    const [selected, setSelected] = useState('');
-    const [data, setData] = useState(null);
+    const [nameSelected, setNameSelected] = useState('');
+    const [issueSelected, setIssueSelected] = useState('');
 
     // Mock data but will connect to our database
     const therapistData = [
         { key: '1', value: 'No Preference' },
         { key: '2', value: 'Dr Chan Boo Chan' },
         { key: '3', value: 'Dr Goh Chee Yen' },
-        { key: '4', value: 'Dr Susan Lim' },
-        { key: '5', value: 'Dr Lim Chong Yee' },
     ]
 
     // Mock data but will connect to our database
@@ -26,8 +25,9 @@ export default function QueueForm() {
         { key: '1', value: 'Family' },
         { key: '2', value: 'Relationship' },
         { key: '3', value: 'School' },
-        { key: '4', value: 'Life Advice' },
-        { key: '5', value: 'Others' },
+        { key: '4', value: 'Career' },
+        { key: '5', value: 'Life Advice' },
+        { key: '6', value: 'Others' },
     ]
 
     const handleFormNext = async () => {
@@ -36,7 +36,7 @@ export default function QueueForm() {
 
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <Pressable style={styles.backContainer} onPressIn={() => router.back()}>
+            <Pressable style={styles.backContainer} onPressIn={() => router.push('/booking')}>
                 <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
             </Pressable>
             <Text style={styles.headerText}>Mental Health Consultation</Text>
@@ -45,10 +45,9 @@ export default function QueueForm() {
                 <SelectList
                     boxStyles={{ backgroundColor: '#FFFFFF' }}
                     dropdownStyles={{ backgroundColor: '#FFFFFF' }}
-                    setSelected={(val) => setSelected(val)}
+                    setSelected={(val) => setNameSelected(val)}
                     data={therapistData}
                     save="value"
-                    defaultOption={{ key: '1', value: 'No Preference' }}
                 />
             </View>
             <View style={styles.secondQuestionContainer}>
@@ -56,14 +55,22 @@ export default function QueueForm() {
                 <MultipleSelectList
                     boxStyles={{ backgroundColor: '#FFFFFF' }}
                     dropdownStyles={{ backgroundColor: '#FFFFFF' }}
-                    setSelected={(val) => setSelected(val)}
+                    setSelected={(val) => setIssueSelected(val)}
                     data={issuesData}
                     save="value"
                     label="Selected"
                 />
             </View>
-            <Link href='/mentalQueue' asChild>
-                <Button mode='contained' style={styles.buttonContainer} labelStyle={{ fontSize: 18 }} onPress={handleFormNext}>Next</Button>
+            <Link href={{pathname: "/mentalQueue", params: {name: nameSelected, issue: issueSelected}}} asChild>
+                <Button 
+                    mode='contained' 
+                    style={styles.buttonContainer} 
+                    labelStyle={{ fontSize: 18 }} 
+                    onPress={handleFormNext}
+                    disabled={(nameSelected === '') || (issueSelected === '') ? true : false }
+                >
+                    Next
+                </Button>
             </Link>
         </SafeAreaView>
     )

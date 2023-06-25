@@ -3,10 +3,43 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import { supabase } from "../../lib/supabase";
 import { Link } from "expo-router";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/auth";
 
 export default function DoctorHome() {
+    const {user} = useAuth();
+    const [doctorName, setDoctorName] = useState('')
+
     // Should change based on the username
-    const doctorName = 'Dr. John Lim';
+    useEffect(() => {
+        let ignore = false;
+
+        if (user === null) {
+            ignore = true;
+        }
+
+        async function FetchName() {
+            if (!ignore) {
+                const {data} = await supabase.from('uhc_doctors').select('username').eq('user_id', user.id);
+                //console.log(data)
+                setDoctorName(data[0].username);
+            }
+        }
+        
+        FetchName();
+    })    
+
+    const [queue, setQueue] = useState(null);
+
+    useEffect(() => {
+        async function fetchQueue() {
+            const { count } = await supabase
+                .from('physical_queue')
+                .select('id', {count: 'exact'});
+            setQueue(count);
+        }
+        fetchQueue();
+    });
 
     return (
         <SafeAreaView style={styles.pageContainer}>
@@ -16,7 +49,7 @@ export default function DoctorHome() {
             <View style={styles.roundedContainer}>
                 <Text style={styles.roundedText}>Number of people in queue:</Text>
                 <View style={styles.roundedRectangle}>
-                    <Text style={styles.numberText}>6</Text>
+                    <Text style={styles.numberText}>{ queue }</Text>
                 </View>
                 <Link href='/doctorStart' asChild>
                     <Button mode='contained' style={{ marginTop: 50 }} labelStyle={{ fontSize: 18 }}>
@@ -43,7 +76,7 @@ const styles = StyleSheet.create({
     },
     nameText: {
         paddingHorizontal: 20,
-        fontSize: 50,
+        fontSize: 38,
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',
     },

@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 
 // disabled={(callUrl === '') ? true : false}
 
-export default function WaitingRoom() {
+export default function MentalWaitingRoom() {
     const router = useRouter();
     const [callUrl, setcallUrl] = useState('');
 
@@ -24,7 +24,7 @@ export default function WaitingRoom() {
                 },
                 {
                     text: 'Leave Room',
-                    onPress: () => router.push('/physicalQueue'),
+                    onPress: () => router.push('/booking'),
                 },
             ]
         );
@@ -51,7 +51,7 @@ export default function WaitingRoom() {
             <Button
                 mode='contained'
                 style={styles.firstButton}
-                onPress={() => router.push('/userCall')}
+                onPress={() => router.push('/mentalCall')}
                 labelStyle={{ fontSize: 18 }}
                 disabled={(callUrl === '') ? true : false}
                

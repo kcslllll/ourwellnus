@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, ScrollView, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../../lib/supabase";
 import { Button, ActivityIndicator } from "react-native-paper";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../../contexts/auth";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -11,27 +11,34 @@ export default function PhysicalQueue() {
     const router = useRouter();
     const [queue, setQueue] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [errMsg, setErrMsg] = useState('')
+    const [refreshing, setRefreshing] = useState(false);
 
     const { user } = useAuth();
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 500);
+    }, []);
 
     useEffect(() => {
         async function fetchQueue() {
             const { count } = await supabase
                 .from('physical_queue')
-                .select('id', {count: 'exact'});
+                .select('id', { count: 'exact' });
             setQueue(count);
         }
         fetchQueue();
-    });
+    },[refreshing]);
 
     const handleJoinQueue = async () => {
         // Add user to queue table in database
         setLoading(true);
-        const { error } = await supabase.from('physical_queue').insert({user_id: user.id});
+        const { error } = await supabase.from('physical_queue').insert({ user_id: user.id });
         setLoading(false);
         if (error) {
-            setErrMsg(error.message);
+            console.log(error.message);
             return;
         }
         router.push('/physicalQueueConfirmation');
@@ -40,19 +47,28 @@ export default function PhysicalQueue() {
 
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <Pressable style={styles.backContainer} onPressIn={() => router.back()}>
-                <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
-            </Pressable>
-            <Text style={styles.headerText}>Physical Health Consultation</Text>
-            <Text style={styles.subHeaderText}>Number of people in queue:</Text>
-            <View style={styles.roundedRectangle}>
-                <Text style={styles.numberText}>{queue}</Text>
-            </View>
-            <Button mode='contained' style={{ marginTop: 25 }} labelStyle={{ fontSize: 18 }} onPress={handleJoinQueue}>
-                Join Queue
-            </Button>
-            {loading && <ActivityIndicator />}
-            {errMsg !== '' && <Text style={{ color: 'purple' }}>{errMsg}</Text>}
+            <ScrollView
+                contentContainerStyle={styles.pageContainer}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+            >
+                <Pressable style={styles.backContainer} onPressIn={() => router.back()}>
+                    <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
+                </Pressable>
+                <Text style={styles.headerText}>Physical Health Consultation</Text>
+                <Text style={styles.subHeaderText}>Number of people in queue:</Text>
+                <View style={styles.roundedRectangle}>
+                    <Text style={styles.numberText}>{queue}</Text>
+                </View>
+                <Button mode='contained' style={{ marginTop: 25 }} labelStyle={{ fontSize: 18 }} onPress={handleJoinQueue}>
+                    Join Queue
+                </Button>
+                {loading && <ActivityIndicator />}
+            </ScrollView>
         </SafeAreaView>
     )
 }
@@ -65,7 +81,6 @@ const styles = StyleSheet.create({
     },
     backContainer: {
         alignSelf: 'flex-start',
-        paddingHorizontal: 20,
         marginTop: 10
     },
     headerText: {

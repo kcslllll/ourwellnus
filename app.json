@@ -17,12 +17,7 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "UIBackgroundModes": [
-          "voip"
-        ]
-      }
+      "supportsTablet": true
     },
     "plugins": [
       "@config-plugins/react-native-webrtc",
