@@ -109,11 +109,10 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 40,
-    backgroundColor: "blue",
+    backgroundColor: "grey",
     justifyContent: "center",
     height: 60,
     width: 160,
-    marginTop: 60,
   },
   buttonLabel: {
     fontSize: 20,
