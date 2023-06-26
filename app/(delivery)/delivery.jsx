@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function SPUCollection() {
+export default function DeliveryCollection() {
   const [selectedDate, setSelectedDate] = useState(new Date()); // Default to the current date
   const [selectedTime, setSelectedTime] = useState(null);
   const router = useRouter();
@@ -18,14 +18,16 @@ export default function SPUCollection() {
 
   const handleDateChange = (event, selected) => {
     const currentDate = selected || selectedDate;
+    console.log(currentDate);
     setSelectedDate(currentDate);
   };
 
   const handleTimeChange = (value) => {
+    console.log(value);
     setSelectedTime(value);
   };
 
-  const isNextButtonDisabled = !selectedTime; // Check if timeslot has been chosen
+  const isNextButtonDisabled = (selectedDate === new Date() || selectedTime === null); // Check if timeslot has been chosen
 
   return (
     <SafeAreaView style={styles.pageContainer}>
@@ -34,7 +36,7 @@ export default function SPUCollection() {
       </TouchableOpacity>
       <Text style={styles.headerText}>Medication Collection</Text>
       <View style={styles.modeContainer}>
-        <Text style={styles.modeText}>Mode of collection: Self Pick-Up</Text>
+        <Text style={styles.modeText}>Mode of collection: Delivery</Text>
       </View>
       <Text style={styles.timePickerLabel}>Select date of collection:</Text>
       <DateTimePicker
@@ -68,15 +70,17 @@ export default function SPUCollection() {
           value={selectedTime}
         />
       </View>
-      <Button
-        mode="contained"
-        style={styles.button}
-        labelStyle={styles.buttonLabel}
-        onPress={handleConfirmationPage}
-        disabled={isNextButtonDisabled} // Disable the button if timeslot is not chosen
-      >
-        Next
-      </Button>
+      <Link href={{ pathname: '/confirmation', params: { date: selectedDate, time: selectedTime } }} asChild>
+        <Button
+          mode="contained"
+          style={styles.button}
+          labelStyle={styles.buttonLabel}
+          onPress={handleConfirmationPage}
+          disabled={isNextButtonDisabled} // Disable the button if timeslot is not chosen
+        >
+          Next
+        </Button>
+      </Link>
     </SafeAreaView>
   );
 }
@@ -124,11 +128,9 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 40,
-    backgroundColor: "grey",
     justifyContent: "center",
     height: 60,
     width: 160,
-    marginTop: 70,
   },
   buttonLabel: {
     fontSize: 21,

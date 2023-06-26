@@ -5,10 +5,13 @@ import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/auth';
 
 export default function SummaryPage() {
   const navigation = useNavigation();
   const router = useRouter();
+  const { user } = useAuth();
 
   useEffect(() => {
     navigation.setOptions({
@@ -18,10 +21,31 @@ export default function SummaryPage() {
 
   const [historyLog, setHistoryLog] = useState('');
   const [status, setStatus] = useState('');
+  const [timeSlot, setTimeSlot] = useState('You have not booked any slots.');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  useEffect(() => {
+    async function fetchTimeSlot() {
+      try {
+        const { data } = await supabase.from('self_pick_up_collection')
+          .select('date_chosen, time_chosen')
+          .eq('user_id', user.id);
+
+        setTimeSlot('Booked: ' + data[0].date_chosen + ' ' + data[0].time_chosen);
+      } catch (e) {
+        console.log(e.message);
+        setTimeSlot('You have not booked any slots.');
+      }
+    }
+
+    if (isRefreshing === true) {
+      fetchTimeSlot();
+      return;
+    }
+  },)
+
   const refreshSummaryPage = () => {
-    const latestHistoryLog = '10 May 2023 8.47pm\n\nPhysical Health Consultation';
+    const latestHistoryLog = '10 May 2023 8.47pm: Physical Health Consultation';
     const latestStatus = 'In progress';
     setHistoryLog(latestHistoryLog);
     setStatus(latestStatus);
@@ -67,8 +91,23 @@ export default function SummaryPage() {
 
         <View style={styles.headerContainer}>
           <View style={styles.iconContainer}>
-            <MaterialCommunityIcons name="check-circle-outline" size={20} color="green" style={styles.tickIcon} />
+            <MaterialCommunityIcons name="clock-outline" size={20} color="#FC6C85" style={styles.tickIcon} />
+          </View>
+          <Text style={styles.collectionHeader}>Time slot for medication collection</Text>
         </View>
+
+        <View style={styles.statusContainer}>
+          <Text style={styles.statusText}>
+            {timeSlot}
+          </Text>
+        </View>
+
+        <View style={styles.separator} />
+
+        <View style={styles.headerContainer}>
+          <View style={styles.iconContainer}>
+            <MaterialCommunityIcons name="check-circle-outline" size={20} color="green" style={styles.tickIcon} />
+          </View>
           <Text style={styles.statusHeader}>Status for Medication Collection</Text>
         </View>
 
@@ -133,6 +172,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Georgia',
     marginLeft: 5,
   },
+  collectionHeader: {
+    color: '#FC6C85',
+    fontSize: 17,
+    fontWeight: 'bold',
+    fontFamily: 'Georgia',
+    marginLeft: 5,
+  },
   logContainer: {
     backgroundColor: 'white',
     padding: 10,
@@ -161,5 +207,5 @@ const styles = StyleSheet.create({
   timeIcon: {
     marginRight: 1,
   },
-  
+
 });

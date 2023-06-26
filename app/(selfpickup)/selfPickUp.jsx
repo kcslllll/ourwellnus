@@ -4,24 +4,22 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function DeliveryCollection() {
+export default function SPUCollection() {
   const [selectedDate, setSelectedDate] = useState(new Date()); // Default to the current date
   const [selectedTime, setSelectedTime] = useState(null);
   const router = useRouter();
 
-  const handleConfirmationPage = () => {
-    router.push("/confirmation");
-  };
-
   const handleDateChange = (event, selected) => {
     const currentDate = selected || selectedDate;
+    //console.log(currentDate);
     setSelectedDate(currentDate);
   };
 
   const handleTimeChange = (value) => {
+    //console.log(value);
     setSelectedTime(value);
   };
 
@@ -34,7 +32,7 @@ export default function DeliveryCollection() {
       </TouchableOpacity>
       <Text style={styles.headerText}>Medication Collection</Text>
       <View style={styles.modeContainer}>
-        <Text style={styles.modeText}>Mode of collection: Delivery</Text>
+        <Text style={styles.modeText}>Mode of collection: Self Pick-Up</Text>
       </View>
       <Text style={styles.timePickerLabel}>Select date of collection:</Text>
       <DateTimePicker
@@ -68,15 +66,16 @@ export default function DeliveryCollection() {
           value={selectedTime}
         />
       </View>
+      <Link href={{ pathname: '/confirmation', params: { date: selectedDate, time: selectedTime } }} asChild>
       <Button
         mode="contained"
         style={styles.button}
         labelStyle={styles.buttonLabel}
-        onPress={handleConfirmationPage}
         disabled={isNextButtonDisabled} // Disable the button if timeslot is not chosen
       >
         Next
       </Button>
+      </Link>
     </SafeAreaView>
   );
 }
@@ -123,12 +122,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    marginTop: 40,
-    backgroundColor: "grey",
+    marginTop: 60,
     justifyContent: "center",
     height: 60,
     width: 160,
-    marginTop: 70,
   },
   buttonLabel: {
     fontSize: 21,

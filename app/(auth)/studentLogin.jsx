@@ -5,6 +5,12 @@ import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { Ionicons } from '@expo/vector-icons';
 
+/* Forgot Password
+<Link href="/forgotPassword" asChild>
+    <Button>Forgot Password?</Button>
+</Link>
+*/
+
 export default function StudentLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -78,9 +84,7 @@ export default function StudentLogin() {
                 onChangeText={setPassword}
             />
             <View style={styles.optionsContainer}>
-                <Link href="/forgotPassword" asChild>
-                    <Button>Forgot Password?</Button>
-                </Link>
+                
                 <Pressable onPress={handlePasswordVisibility}>
                     <Ionicons name={eyeIcon} size={24} color="#232323" />
                 </Pressable>

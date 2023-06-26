@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 40,
-    backgroundColor: "grey",
     justifyContent: "center",
     height: 60,
     width: 160,
