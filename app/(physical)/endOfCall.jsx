@@ -16,7 +16,7 @@ export default function UserCall() {
                 mode="contained"
                 labelStyle={{fontSize: 18}}
                 style={styles.firstButton}
-                onPress={() => router.replace('/medicationcollection')}
+                onPress={() => router.push('/medicationcollection')}
             >
                 Book a Time Slot
             </Button>

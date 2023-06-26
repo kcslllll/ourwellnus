@@ -14,18 +14,17 @@ export default function MedicationCollection() {
 
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <TouchableOpacity style={styles.backContainer} onPressIn={() => router.back()}>
+            <TouchableOpacity style={styles.backContainer} onPressIn={() => router.replace('/summary')}>
                 <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
             </TouchableOpacity>
             <Text style={styles.headerText}>Medication Collection</Text>
-            <Text style={styles.subHeaderText}>In order to help you recover as soon {'\n'} 
-            as possible, we have prescribed you with {'\n'}
-            the medication you need. Please book a {'\n'}
-            time for you to head down to UHC to pick {'\n'}
-            it up, or book a time which you would {'\n'}
-            like your medication to be delivered to you.</Text>
+            <Text style={styles.subHeaderText}>
+                Please book a time for you to head down{'\n'}
+                to UHC to pick it up, or book a time which{'\n'}
+                you would like your medication to be delivered to you.
+            </Text>
             <Button 
-                mode='contained' style={{ marginTop: 40, backgroundColor: 'green', justifyContent: 'center', height: 60}} 
+                mode='contained' style={{ marginTop: 40, justifyContent: 'center', height: 60}} 
                 labelStyle={{ fontSize: 21 }} 
                 onPress={handleSelectMode}
             >
@@ -47,8 +46,8 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     headerText: {
-        marginTop: 20,
-        fontSize: 40,
+        marginTop: 130,
+        fontSize: 45,
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',
         textAlign: 'center',
@@ -58,7 +57,7 @@ const styles = StyleSheet.create({
         fontWeight: '300',
         fontFamily: 'Trebuchet MS',
         marginBottom: 20,
-        marginTop: 100,
+        marginTop: 40,
         textAlign: 'center'
     },
     roundedRectangle: {

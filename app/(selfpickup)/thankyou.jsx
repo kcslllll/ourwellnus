@@ -10,20 +10,18 @@ export default function MedicationCollection() {
     return (
         <SafeAreaView style={styles.pageContainer}>
           <Text style={styles.subHeaderText}>
-            Thank you for your {'\n'}
-            confirmation, and {'\n'}
-            we hope to see {'\n'}
+            Thank you for your confirmation, and
+            we hope to see
             you soon!
           </Text>
-          <Text style={styles.additionalText}>Please come within your stipulated {'\n'}
-          timing, thank you!</Text>
+          <Text style={styles.additionalText}>Please be reminded to come within the stipulated time.</Text>
           <Button
             mode="contained"
             style={styles.button}
             labelStyle={styles.buttonLabel}
             onPress={() => router.push('/summary')}
           >
-            Back to home
+            Back to Home
           </Button>
         </SafeAreaView>
       );
@@ -37,7 +35,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   subHeaderText: {
-    fontSize: 25,
+    fontSize: 30,
     fontWeight: "bold",
     fontFamily: "Trebuchet MS",
     marginBottom: 50,
@@ -52,12 +50,11 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 40,
-    backgroundColor: "green",
     justifyContent: "center",
     height: 60,
-    width: 160,
+    width: 220,
   },
   buttonLabel: {
-    fontSize: 17,
+    fontSize: 18,
   },
 });
