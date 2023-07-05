@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import { Button } from 'react-native-paper';
 import { Header } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
@@ -73,11 +74,6 @@ export default function SummaryPage() {
         <View style={styles.summaryContainer}>
           <Text style={styles.summaryText}>Summary</Text>
         </View>
-
-        <TouchableOpacity style={styles.profileButton} onPress={() => router.push('/profilepage')}>
-          <Ionicons name="person-circle-outline" size={30} color="black" />
-        </TouchableOpacity>
-
         <View style={styles.headerContainer}>
           <MaterialCommunityIcons name="clock-outline" size={20} color="orange" style={styles.timeIcon} />
           <Text style={styles.historyHeader}>History Log</Text>
@@ -116,6 +112,14 @@ export default function SummaryPage() {
             {status}
           </Text>
         </View>
+        <Button
+        onPress={() => supabase.auth.signOut()}
+        labelStyle={styles.buttonLabel}
+        style={styles.logoutButton}
+        mode = "contained"
+        >
+        Logout
+      </Button>
       </ScrollView>
     </SafeAreaView>
   );
@@ -165,6 +169,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Georgia',
     marginLeft: 5,
   },
+  logoutButton: {
+    marginTop: 100,
+    borderRadius: 5,
+  },
   statusHeader: {
     color: 'green',
     fontSize: 17,
@@ -207,5 +215,4 @@ const styles = StyleSheet.create({
   timeIcon: {
     marginRight: 1,
   },
-
 });
