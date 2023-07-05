@@ -64,7 +64,7 @@ export default function PhysicalQueue() {
                 <View style={styles.roundedRectangle}>
                     <Text style={styles.numberText}>{queue}</Text>
                 </View>
-                <Button mode='contained' style={{ marginTop: 25 }} labelStyle={{ fontSize: 18 }} onPress={handleJoinQueue}>
+                <Button mode='contained' style={styles.joinButton} labelStyle={{ fontSize: 18 }} onPress={handleJoinQueue}>
                     Join Queue
                 </Button>
                 {loading && <ActivityIndicator />}
@@ -77,11 +77,11 @@ const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,
         backgroundColor: '#e9d3ff',
-        alignItems: 'center'
     },
     backContainer: {
+        paddingHorizontal: 20,
         alignSelf: 'flex-start',
-        marginTop: 10
+        marginTop: 10,
     },
     headerText: {
         marginTop: 20,
@@ -106,7 +106,8 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 10,
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignSelf: 'center'
     },
     numberText: {
         fontSize: 50,
@@ -115,4 +116,8 @@ const styles = StyleSheet.create({
         fontFamily: 'Trebuchet MS',
         alignSelf: "center",
     },
+    joinButton: {
+        marginTop: 25,
+        alignSelf: 'center',
+    }
 })
