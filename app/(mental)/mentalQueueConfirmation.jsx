@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Alert, ScrollView, RefreshControl } from "react
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../../lib/supabase";
 import { Button } from "react-native-paper";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../contexts/auth";
 
@@ -67,12 +67,6 @@ async function registerForPushNotificationsAsync() {
 }
 
 export default function MentalQueueConfirmation() {
-    const router = useRouter();
-    const [position, setPosition] = useState(null);
-    const [joinTime, setJoinTime] = useState(null);
-    const [refreshing, setRefreshing] = useState(false);
-    const { user } = useAuth();
-
     // Sending push notifications when user turn
     const [expoPushToken, setExpoPushToken] = useState('');
     const notificationListener = useRef();
@@ -81,13 +75,13 @@ export default function MentalQueueConfirmation() {
     useEffect(() => {
         // Register device for push notifications
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-        console.log(expoPushToken);
+        //console.log(expoPushToken);
 
         // Listens for notifications in the foreground
         notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
             // Redirects user to the Waiting Room
             router.replace('/mentalWaitingRoom');
-            console.log(notification);
+            //console.log(notification);
 
         });
 
@@ -104,6 +98,13 @@ export default function MentalQueueConfirmation() {
         };
     }, [expoPushToken, router]);
 
+    const router = useRouter();
+    const [position, setPosition] = useState(null);
+    const [joinTime, setJoinTime] = useState(null);
+    const [refreshing, setRefreshing] = useState(false);
+    const { user } = useAuth();
+    const param = useLocalSearchParams();
+
     const onRefresh = useEffect(() => {
         setInterval(() => {
             setRefreshing(true);
@@ -114,27 +115,50 @@ export default function MentalQueueConfirmation() {
     });
 
     useEffect(() => {
-        // get position of user in the queue database
+        // fetch join time of user in the queue database
         async function fetchJoinTime() {
-            const { data } = await supabase.from('mental_queue').select('joined_at').eq('user_id', user.id)
-            console.log(data);
-            setJoinTime(data[0].joined_at);
+            const { data } = await supabase
+                .from('mental_queue')
+                .select('joined_at')
+                .eq('user_id', user.id);
+            if (data.length > 0) {
+                //console.log(data);
+                setJoinTime(data[0].joined_at);
+            }
         }
         fetchJoinTime();
-    }, [user.id])
+    }, [user.id, router])
 
     useEffect(() => {
+        // get position of user in the queue
         async function fetchPosition() {
-            const { data } = await supabase.from('mental_queue').select('joined_at').lt('joined_at', joinTime);
-            if (data !== null) {
-                console.log(data.length);
-                setPosition(data.length + 1);
+            if (param.name !== 'No Preference') {
+                const { data } = await supabase
+                    .from('mental_queue')
+                    .select('joined_at')
+                    .eq('doctor_chosen', param.name)
+                    .lt('joined_at', joinTime);
+                if (data !== null) {
+                    console.log(data)
+                    setPosition(data.length + 1);
+                }
+            } else {
+                const { data } = await supabase
+                    .from('mental_queue')
+                    .select('joined_at')
+                    .eq('doctor_chosen', param.shorterQ)
+                    .lt('joined_at', joinTime);
+                if (data !== null) {
+                    console.log(data);
+                    setPosition(data.length + 1);
+                }
             }
         }
         fetchPosition();
-    },[refreshing, joinTime])
+    }, [refreshing, joinTime, param.name, param.shorterQ])
 
     useEffect(() => {
+        // when user is the first in queue
         async function DeleteUser() {
             const { error } = await supabase.from('mental_queue').delete().eq('user_id', user.id)
             if (error) {
@@ -147,11 +171,10 @@ export default function MentalQueueConfirmation() {
             schedulePushNotification();
             DeleteUser();
         }
-    },[position, user.id])
+    }, [position, user.id])
 
     const handleLeaveQueue = async () => {
-        // Remove user from queue table in database
-
+        // when user chooses to leave queue halfway
         async function LeaveQueue() {
             const { error } = await supabase
                 .from('mental_queue')
@@ -185,11 +208,11 @@ export default function MentalQueueConfirmation() {
 
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <ScrollView 
+            <ScrollView
                 contentContainerStyle={styles.pageContainer}
                 refreshControl={
-                    <RefreshControl 
-                        refreshing={refreshing} 
+                    <RefreshControl
+                        refreshing={refreshing}
                         onRefresh={onRefresh}
                     />
                 }
@@ -199,7 +222,10 @@ export default function MentalQueueConfirmation() {
                 <View style={styles.roundedRectangle}>
                     <Text style={styles.numberText}>{position}</Text>
                 </View>
-                <Text style={styles.normalText}>We will notify you when it is your turn!</Text>
+                <Text style={styles.normalText}>
+                    Please do not leave this screen, {'\n'}
+                    we will notify you when it is your turn!
+                </Text>
                 <Button mode='contained' style={{ marginTop: 30 }} labelStyle={{ fontSize: 18 }} onPress={handleLeaveQueue}>Leave Queue</Button>
             </ScrollView>
         </SafeAreaView>
