@@ -1,23 +1,38 @@
 import { Text, StyleSheet, View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SelectList, MultipleSelectList } from "react-native-dropdown-select-list";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { supabase } from "../../lib/supabase";
 
 
 export default function QueueForm() {
     const router = useRouter();
+    const [firstDoc, setFirstDoc] = useState('');
+    const [secondDoc, setSecondDoc] = useState('');
     const [nameSelected, setNameSelected] = useState('');
     const [issueSelected, setIssueSelected] = useState('');
+
+    useEffect(() => {
+        async function fetchDoc() {
+            const { data } = await supabase
+                .from('ucs_therapists')
+                .select('username');
+            //console.log(data[0].username);
+            setFirstDoc(data[0].username);
+            setSecondDoc(data[1].username);
+        }
+        fetchDoc();
+    }, [])
 
     // Mock data but will connect to our database
     const therapistData = [
         { key: '1', value: 'No Preference' },
-        { key: '2', value: 'Dr Chan Boo Chan' },
-        { key: '3', value: 'Dr Goh Chee Yen' },
+        { key: '2', value: firstDoc },
+        { key: '3', value: secondDoc },
     ]
 
     // Mock data but will connect to our database
@@ -61,13 +76,13 @@ export default function QueueForm() {
                     label="Selected"
                 />
             </View>
-            <Link href={{pathname: "/mentalQueue", params: {name: nameSelected, issue: issueSelected}}} asChild>
-                <Button 
-                    mode='contained' 
-                    style={styles.buttonContainer} 
-                    labelStyle={{ fontSize: 18 }} 
+            <Link href={{ pathname: "/mentalQueue", params: { name: nameSelected, issue: issueSelected } }} asChild>
+                <Button
+                    mode='contained'
+                    style={styles.buttonContainer}
+                    labelStyle={{ fontSize: 18 }}
                     onPress={handleFormNext}
-                    disabled={(nameSelected === '') || (issueSelected === '') ? true : false }
+                    disabled={(nameSelected === '') || (issueSelected === '') ? true : false}
                 >
                     Next
                 </Button>

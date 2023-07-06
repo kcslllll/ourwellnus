@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Pressable, ScrollView, RefreshControl, Activity
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../../lib/supabase";
 import { Button } from "react-native-paper";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useState, useEffect } from "react";
 import { useAuth } from "../../contexts/auth";
@@ -14,6 +14,9 @@ export default function MentalQueue() {
     const [queue, setQueue] = useState(null);
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [shorterQ, setShorterQ] = useState('');
+    const [firstQ, setFirstQ] = useState('');
+    const [secondQ, setSecondQ] = useState('');
 
     const { user } = useAuth();
 
@@ -25,30 +28,72 @@ export default function MentalQueue() {
     }, []);
 
 
-    // Fetch the number of people in queue currently
+    // Fetch the number of people in a queue (based on doctor chosen)
     useEffect(() => {
         async function fetchQueue() {
             const { count } = await supabase
                 .from('mental_queue')
-                .select('id', { count: 'exact' });
+                .select('id', { count: 'exact' })
+                .eq('doctor_chosen', param.name);
             //console.log(count);
             setQueue(count);
         }
-        fetchQueue();
-    },[refreshing]);
+        async function fetchFirstQ() {
+            const { count } = await supabase
+                .from('mental_queue')
+                .select('id', { count: 'exact' })
+                .eq('doctor_chosen', 'Dr. Chan Boo Chan');
+            //console.log(count);
+            setFirstQ(count);
+        }
+        async function fetchSecondQ() {
+            const { count } = await supabase
+                .from('mental_queue')
+                .select('id', { count: 'exact' })
+                .eq('doctor_chosen', 'Dr. Goh Chee Yen');
+            //console.log(count);
+            setSecondQ(count);
+        }
+        if (param.name == 'No Preference') {
+            // user did not specify their preferred doctor
+            fetchFirstQ();
+            fetchSecondQ();
+            // set queue as the shorter one
+            if (firstQ <= secondQ) {
+                setShorterQ('Dr. Chan Boo Chan');
+                setQueue(firstQ);
+            } else {
+                setShorterQ('Dr. Goh Chee Yen');
+                setQueue(secondQ);
+            }
+        } else {
+            // user have specified the doctor they prefer
+            fetchQueue();
+        }
+    }, [refreshing, param.name, firstQ, secondQ, router]);
 
 
     const handleJoinQueue = async () => {
         // Add user to queue table in database
         setLoading(true);
-        const { error } = await supabase.from('mental_queue').insert({ user_id: user.id, doctor_chosen: param.name, issue_stated: param.issue});
-        setLoading(false);
-        if (error) {
-            console.log(error.message);
-            return;
+        if (param.name == 'No Preference') {
+            // insert into first queue
+            const { error } = await supabase
+                .from('mental_queue')
+                .insert({ user_id: user.id, doctor_chosen: shorterQ, issue_stated: param.issue });
+            if (error) {
+                console.log(error.message);
+            }
+        } else {
+            const { error } = await supabase
+                .from('mental_queue')
+                .insert({ user_id: user.id, doctor_chosen: param.name, issue_stated: param.issue });
+            if (error) {
+                console.log(error.message);
+            }
         }
-        router.push('/mentalQueueConfirmation');
-        
+        setLoading(false);
+        return;
     }
 
     return (
@@ -75,9 +120,19 @@ export default function MentalQueue() {
                 <View style={styles.roundedRectangle}>
                     <Text style={styles.numberText}>{queue}</Text>
                 </View>
-                <Button mode='contained' style={{ marginTop: 25 }} labelStyle={{ fontSize: 18 }} onPress={handleJoinQueue}>
-                    Join Queue
-                </Button>
+                <Link
+                    href={{
+                        pathname: "/mentalQueueConfirmation",
+                        params: {
+                            name: param.name,
+                            shorterQ: shorterQ
+                        }
+                    }} asChild
+                >
+                    <Button mode='contained' style={{ marginTop: 25 }} labelStyle={{ fontSize: 18 }} onPress={handleJoinQueue}>
+                        Join Queue
+                    </Button>
+                </Link>
                 {loading && <ActivityIndicator />}
             </ScrollView>
         </SafeAreaView>

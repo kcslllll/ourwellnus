@@ -207,7 +207,8 @@ export default function PhysicalQueueConfirmation() {
                 </View>
                 <Text style={styles.normalText}>
                     Please do not leave this screen, {'\n'}
-                    we will notify you when it is your turn!</Text>
+                    we will notify you when it is your turn!
+                </Text>
                 <Button mode='contained' style={{ marginTop: 30 }} labelStyle={{ fontSize: 18 }} onPress={handleLeaveQueue}>Leave Queue</Button>
             </ScrollView>
         </SafeAreaView>
