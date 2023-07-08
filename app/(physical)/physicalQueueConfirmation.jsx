@@ -138,20 +138,10 @@ export default function PhysicalQueueConfirmation() {
         /* 
          When it is the user's turn, we 
          1. send them a notification 
-         2. delete them from our queue database 
-         3. bring them to the waiting room
+         2. bring them to the waiting room
         */
-        async function DeleteUser() {
-            const { error } = await supabase.from('physical_queue').delete().eq('user_id', user.id)
-            if (error) {
-                console.log(error.message);
-            }
-            return;
-        }
-
         if (position === 1) {
             schedulePushNotification();
-            DeleteUser();
         }
     }, [position, user.id])
 
