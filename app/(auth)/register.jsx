@@ -12,7 +12,7 @@ export default function Register() {
     const [loading, setLoading] = useState(false);
     const [errMsg, setErrMsg] = useState('')
     const router = useRouter();
-    const {hidePassword, eyeIcon, handlePasswordVisibility} = useTogglePasswordVisibility();
+    const { hidePassword, eyeIcon, handlePasswordVisibility } = useTogglePasswordVisibility();
 
     function useTogglePasswordVisibility() {
         const [hidePassword, setHidePassword] = useState(true);
@@ -28,7 +28,7 @@ export default function Register() {
             }
         };
 
-        return {hidePassword, eyeIcon, handlePasswordVisibility};
+        return { hidePassword, eyeIcon, handlePasswordVisibility };
     }
 
     // Actions when 'Create Account' button is pressed
@@ -55,7 +55,18 @@ export default function Register() {
 
         setLoading(true);
         // adding the login credentials in our database
-        const { error } = await supabase.auth.signUp({name, email, password});
+
+        const { error } = await supabase.auth.signUp(
+            {
+                email,
+                password,
+                options: {
+                    data: {
+                        name,
+                    }
+                }
+            }
+        )
         setLoading(false);
         if (error) {
             setErrMsg(error.message);
@@ -68,25 +79,25 @@ export default function Register() {
 
     return (
         <View style={styles.container}>
-            <Text style={{marginTop: 90, fontSize: 36, alignSelf: 'center'}}>Create an account.</Text>
-            <Text style={{marginTop: 50}}>Name:</Text>
-            <TextInput 
+            <Text style={{ marginTop: 90, fontSize: 36, alignSelf: 'center' }}>Create an account.</Text>
+            <Text style={{ marginTop: 50 }}>Name:</Text>
+            <TextInput
                 autoCapitalize='none'
                 textContentType='name'
                 value={name}
                 onChangeText={setName}
                 clearButtonMode='always'
             />
-            <Text style={{marginTop: 20}}>NUS Email:</Text>
-            <TextInput 
+            <Text style={{ marginTop: 20 }}>NUS Email:</Text>
+            <TextInput
                 autoCapitalize='none'
                 textContentType='emailAddress'
                 value={email}
                 onChangeText={setEmail}
                 clearButtonMode='always'
             />
-            <Text style={{marginTop: 20}}>Password:</Text>
-            <TextInput 
+            <Text style={{ marginTop: 20 }}>Password:</Text>
+            <TextInput
                 secureTextEntry={hidePassword}
                 autoCapitalize='none'
                 textContentType='password'
@@ -95,9 +106,9 @@ export default function Register() {
                 clearButtonMode='always'
             />
             <Pressable onPress={handlePasswordVisibility}>
-                <Ionicons name={eyeIcon} size={24} color="#232323"/>
+                <Ionicons name={eyeIcon} size={24} color="#232323" />
             </Pressable>
-            {errMsg !== '' && <Text style={{color: 'purple'}}>{errMsg}</Text>}
+            {errMsg !== '' && <Text style={{ color: 'purple' }}>{errMsg}</Text>}
             {loading && <ActivityIndicator />}
             <Button onPress={handleRegister} mode='elevated' style={styles.createContainer}>Create Account</Button>
         </View>

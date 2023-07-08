@@ -1,16 +1,25 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Alert, ScrollView, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import { supabase } from "../../lib/supabase";
-import { Link } from "expo-router";
-import { useState, useEffect } from "react";
+import { useRouter } from "expo-router";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../contexts/auth";
 
 export default function DoctorHome() {
-    const {user} = useAuth();
-    const [doctorName, setDoctorName] = useState('')
+    const { user } = useAuth();
+    const router = useRouter();
+    const [doctorName, setDoctorName] = useState('');
+    const [refreshing, setRefreshing] = useState(false);
 
-    // Should change based on the username
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 500);
+    }, []);
+
+    // Displays name of user at the top of the home page
     useEffect(() => {
         let ignore = false;
 
@@ -20,43 +29,73 @@ export default function DoctorHome() {
 
         async function FetchName() {
             if (!ignore) {
-                const {data} = await supabase.from('uhc_doctors').select('username').eq('user_id', user.id);
+                const { data } = await supabase.from('uhc_doctors').select('username').eq('user_id', user.id);
                 //console.log(data)
                 setDoctorName(data[0].username);
             }
         }
-        
+
         FetchName();
-    })    
+    })
 
     const [queue, setQueue] = useState(null);
 
+    // Shows number of people in the queue for physical health consultations
     useEffect(() => {
         async function fetchQueue() {
             const { count } = await supabase
                 .from('physical_queue')
-                .select('id', {count: 'exact'});
+                .select('id', { count: 'exact' });
             setQueue(count);
         }
         fetchQueue();
     });
 
+    // only allow consultations when there are people in the queue
+    // if queue length === 0, show an alert
+    const handleStartConsult = async () => {
+        if (queue === 0) {
+            Alert.alert(
+                'Unable to start consultation',
+                'There is nobody in the queue!',
+                [{
+                    text: 'OK',
+                }]
+            )
+        } else {
+            router.push('/doctorStart');
+        }
+    }
+
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <Button style={styles.logoutContainer} onPress={() => supabase.auth.signOut()}>Logout</Button>
-            <Text style={styles.welcomeText}>Welcome</Text>
-            <Text style={styles.nameText}>{doctorName},</Text>
-            <View style={styles.roundedContainer}>
-                <Text style={styles.roundedText}>Number of people in queue:</Text>
-                <View style={styles.roundedRectangle}>
-                    <Text style={styles.numberText}>{ queue }</Text>
-                </View>
-                <Link href='/doctorStart' asChild>
-                    <Button mode='contained' style={{ marginTop: 50 }} labelStyle={{ fontSize: 18 }}>
+            <ScrollView
+                contentContainerStyle={styles.pageContainer}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+            >
+                <Button style={styles.logoutContainer} onPress={() => supabase.auth.signOut()}>Logout</Button>
+                <Text style={styles.welcomeText}>Welcome</Text>
+                <Text style={styles.nameText}>{doctorName},</Text>
+                <View style={styles.roundedContainer}>
+                    <Text style={styles.roundedText}>Number of people in queue:</Text>
+                    <View style={styles.roundedRectangle}>
+                        <Text style={styles.numberText}>{queue}</Text>
+                    </View>
+                    <Button
+                        mode='contained'
+                        style={{ marginTop: 50 }}
+                        labelStyle={{ fontSize: 18 }}
+                        onPress={handleStartConsult}
+                    >
                         Start Consultation
                     </Button>
-                </Link>
-            </View>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     )
 }
