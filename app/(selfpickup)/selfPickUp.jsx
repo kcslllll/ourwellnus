@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
+import DatePicker from 'react-native-datepicker';
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
 import { Link, useRouter } from "expo-router";
@@ -14,9 +15,35 @@ export default function SPUCollection() {
 
   const handleDateChange = (event, selected) => {
     const currentDate = selected || selectedDate;
-    //console.log(currentDate);
+    const selectedDay = currentDate.getDay(); // Get the day of the week (0 = Sunday, 1 = Monday, etc.)
+  
+    if (selectedDay === 0 || selectedDay === 6) {
+      // Check if the selected date is a Sunday or Saturday
+      return; // Do not update the selected date
+    }
+  
     setSelectedDate(currentDate);
   };
+  
+  const isDateSelectable = (date) => {
+    const selectedDate = new Date(date);
+    const selectedDay = selectedDate.getDay(); // Get the day of the week (0 = Sunday, 1 = Monday, etc.)
+    const minSelectableDate = getMinDate();
+  
+    return selectedDate >= minSelectableDate && (selectedDay !== 0 && selectedDay !== 6);
+  };
+  
+  const getMinDate = () => {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 4);
+    return currentDate;
+  };  
+
+  const getMaxDate = () => {
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 30);
+    return currentDate;
+  };  
 
   const handleTimeChange = (value) => {
     //console.log(value);
@@ -39,7 +66,11 @@ export default function SPUCollection() {
         value={selectedDate}
         mode="date"
         display="default"
-        onChange={handleDateChange}
+        onChange={handleDateChange} 
+        minimumDate={getMinDate()} // Set the minimumDate to 4 days after the current date
+        maximumDate={getMaxDate()} // Set the maximumDate to 1 month after the current date
+        disabled={!isDateSelectable} // Disable the date picker if the date is not selectable
+        disabledDates={[0, 6]} // Disable Sundays (0) and Saturdays (6)
       />
       <View style={styles.timePickerContainer}>
         <Text style={styles.timePickerLabel}>Select a time:</Text>

@@ -9,7 +9,7 @@ export default function MedicationCollection() {
     const router = useRouter();
     
     const handleSelectMode = () => {
-        router.push('/modeOfCollection');
+        router.push('/selfPickUp');
     }
 
     return (
@@ -20,8 +20,7 @@ export default function MedicationCollection() {
             <Text style={styles.headerText}>Medication Collection</Text>
             <Text style={styles.subHeaderText}>
                 Please book a time for you to head down{'\n'}
-                to UHC to pick it up, or book a time which{'\n'}
-                you would like your medication to be delivered to you.
+                to UHC to pick your medication up.
             </Text>
             <Button 
                 mode='contained' style={{ marginTop: 40, justifyContent: 'center', height: 60}} 
