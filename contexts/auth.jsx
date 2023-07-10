@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from "../lib/supabase";
 import { useRouter, useSegments } from 'expo-router';
@@ -14,6 +13,18 @@ function useProtectedRoute(user) {
     const router = useRouter();
 
     useEffect(() => {
+        async function fetchUser() {
+        // find user in doctor list, if error, user is a therapist
+            //console.log(user.id);
+            const { data } = await supabase.from('uhc_doctors').select('username').eq('user_id', user.id);
+            if (data.length === 0) {
+                //console.log(data);
+                router.replace('/therapistConsultation');
+            } else {
+                //console.log(data);
+                router.replace("/doctorHome");
+            }
+        }
         // Bringing the user to the page they are supposed to be in
         console.log('useProtectedRoute useEffect called');
         const inAuthGroup = segments[0] === "(auth)";
@@ -21,12 +32,13 @@ function useProtectedRoute(user) {
             router.replace("/userIdentity");
         } else if (user != null && inAuthGroup) {
             if (user.email.slice(-10) == '@u.nus.edu') {
+                // user is a NUS student
                 router.replace("/summary");
             } else {
-                router.replace("/doctorHome");
+                fetchUser();
             }
         }
-        
+
     }, [router, segments, user]) // useEffect will only run if user status changes
 
 }
@@ -47,7 +59,7 @@ export function AuthProvider({ children }) {
             } else if (event === "PASSWORD_RECOVERY") {
                 setUser(session.user);
             }
-        }) 
+        })
         return () => data.subscription.unsubscribe();
     }, []);
 
