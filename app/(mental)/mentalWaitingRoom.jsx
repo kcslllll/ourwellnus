@@ -3,12 +3,23 @@ import { Alert, StyleSheet, Text, TextInput, Keyboard, TouchableWithoutFeedback,
 import { useState } from "react";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../contexts/auth";
 
 // disabled={(callUrl === '') ? true : false}
 
 export default function MentalWaitingRoom() {
+    const { user } = useAuth();
     const router = useRouter();
     const [callUrl, setcallUrl] = useState('');
+
+    const deleteUser = async () => {
+        const { error } = await supabase.from('mental_queue').delete().eq('user_id', user.id)
+        if (error) {
+            console.log(error.message);
+        }
+        return;
+    };
 
     const handleLeaveRoom = async () => {
         // Ends call on doctor's side with a notification for doctor
@@ -24,10 +35,19 @@ export default function MentalWaitingRoom() {
                 },
                 {
                     text: 'Leave Room',
-                    onPress: () => router.push('/booking'),
+                    onPress: () => {
+                        deleteUser();
+                        router.push('/booking');
+                    }
                 },
             ]
         );
+    };
+
+    const handleJoinCall = async () => {
+        // deletes user from the queue and bring them to the call page
+        deleteUser();
+        router.push('/mentalCall');
     };
 
     return (
@@ -51,7 +71,7 @@ export default function MentalWaitingRoom() {
             <Button
                 mode='contained'
                 style={styles.firstButton}
-                onPress={() => router.push('/mentalCall')}
+                onPress={handleJoinCall}
                 labelStyle={{ fontSize: 18 }}
                 disabled={(callUrl === '') ? true : false}
                

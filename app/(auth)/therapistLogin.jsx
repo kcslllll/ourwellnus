@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 </Link>
 */
 
-export default function DoctorLogin() {
+export default function TherapistLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -42,13 +42,13 @@ export default function DoctorLogin() {
             return;
         }
 
-        if (email.slice(-10) == '@u.nus.edu') {
-            setErrMsg('Invalid email!');
+        if (password == '') {
+            setErrMsg('Please fill in your password.');
             return;
         }
 
-        if (password == '') {
-            setErrMsg('Please fill in your password.');
+        if (email.slice(-10) == '@u.nus.edu') {
+            setErrMsg('Invalid email!');
             return;
         }
 

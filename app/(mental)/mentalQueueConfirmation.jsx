@@ -158,18 +158,13 @@ export default function MentalQueueConfirmation() {
     }, [refreshing, joinTime, param.name, param.shorterQ])
 
     useEffect(() => {
-        // when user is the first in queue
-        async function DeleteUser() {
-            const { error } = await supabase.from('mental_queue').delete().eq('user_id', user.id)
-            if (error) {
-                console.log(error.message);
-            }
-            return;
-        }
-
-        if (position === 1) {
+        /* 
+         When it is the user's turn, we 
+         1. send them a notification 
+         2. bring them to the waiting room
+        */
+         if (position === 1) {
             schedulePushNotification();
-            DeleteUser();
         }
     }, [position, user.id])
 

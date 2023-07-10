@@ -9,7 +9,7 @@ import { supabase } from "../../lib/supabase";
 
 export default function DoctorStart() {
     const router = useRouter();
-    const [patientId, setPatientId] = useState('')
+    const [patientId, setPatientId] = useState(null)
     const [patientName, setPatientName] = useState('');
     const [patientEmail, setPatientEmail] = useState('');
 
@@ -28,7 +28,7 @@ export default function DoctorStart() {
         }
         async function fetchPatientName() {
             const { data, error } = await supabase
-                .from('patient_profile')
+                .from('user_profile')
                 .select('name')
                 .eq('user_id', patientId);
             if (error) {
@@ -40,7 +40,7 @@ export default function DoctorStart() {
         }
         async function fetchPatientEmail() {
             const { data, error } = await supabase
-                .from('patient_profile')
+                .from('user_profile')
                 .select('email')
                 .eq('user_id', patientId);
             if (error) {
@@ -53,7 +53,7 @@ export default function DoctorStart() {
         fetchPatientId();
         fetchPatientName();
         fetchPatientEmail();
-    }, [router, patientId])
+    }, [patientId])
 
     const handleStartCall = async () => {
         // should do the following:

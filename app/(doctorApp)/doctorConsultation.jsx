@@ -1,15 +1,13 @@
-import { Text, View, StyleSheet, Alert, ScrollView, RefreshControl } from "react-native";
+import { Text, View, StyleSheet, Alert, ScrollView, RefreshControl, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import { supabase } from "../../lib/supabase";
 import { useRouter } from "expo-router";
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "../../contexts/auth";
+import { Ionicons } from '@expo/vector-icons';
 
-export default function DoctorHome() {
-    const { user } = useAuth();
+export default function DoctorConsultation() {
     const router = useRouter();
-    const [doctorName, setDoctorName] = useState('');
     const [refreshing, setRefreshing] = useState(false);
 
     const onRefresh = useCallback(() => {
@@ -18,25 +16,6 @@ export default function DoctorHome() {
             setRefreshing(false);
         }, 500);
     }, []);
-
-    // Displays name of user at the top of the home page
-    useEffect(() => {
-        let ignore = false;
-
-        if (user === null) {
-            ignore = true;
-        }
-
-        async function FetchName() {
-            if (!ignore) {
-                const { data } = await supabase.from('uhc_doctors').select('username').eq('user_id', user.id);
-                //console.log(data)
-                setDoctorName(data[0].username);
-            }
-        }
-
-        FetchName();
-    })
 
     const [queue, setQueue] = useState(null);
 
@@ -78,23 +57,22 @@ export default function DoctorHome() {
                     />
                 }
             >
-                <Button style={styles.logoutContainer} onPress={() => supabase.auth.signOut()}>Logout</Button>
-                <Text style={styles.welcomeText}>Welcome</Text>
-                <Text style={styles.nameText}>{doctorName},</Text>
-                <View style={styles.roundedContainer}>
-                    <Text style={styles.roundedText}>Number of people in queue:</Text>
+                <Pressable style={styles.backContainer} onPressIn={() => router.back()}>
+                    <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
+                </Pressable>
+                <Text style={styles.headerText}>Start a Consultation</Text>
+                    <Text style={styles.normalText}>Number of people in queue:</Text>
                     <View style={styles.roundedRectangle}>
                         <Text style={styles.numberText}>{queue}</Text>
                     </View>
                     <Button
                         mode='contained'
-                        style={{ marginTop: 50 }}
+                        style={styles.buttonContainer}
                         labelStyle={{ fontSize: 18 }}
                         onPress={handleStartConsult}
                     >
                         Start Consultation
                     </Button>
-                </View>
             </ScrollView>
         </SafeAreaView>
     )
@@ -105,50 +83,43 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#e9d3ff',
     },
-    logoutContainer: {
-        alignSelf: 'flex-end',
-        paddingHorizontal: 20
-    },
-    welcomeText: {
-        padding: 20,
-        fontSize: 20
-    },
-    nameText: {
+    backContainer: {
         paddingHorizontal: 20,
-        fontSize: 38,
+        alignSelf: 'flex-start',
+        marginTop: 10,
+    },
+    headerText: {
+        marginTop: 40,
+        fontSize: 36,
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',
+        textAlign: 'center',
     },
-    roundedContainer: {
-        flexGrow: 1,
-        backgroundColor: '#FFFFFF',
-        padding: 20,
-        borderRadius: 10,
-        margin: 20,
-        marginTop: 50,
-        position: 'relative',
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    roundedText: {
+    normalText: {
         fontSize: 18,
+        alignSelf: 'center',
+        fontFamily: 'Trebuchet MS',
+        marginTop: 150
     },
     roundedRectangle: {
-        marginTop: 40,
+        marginTop: 50,
         width: 130,
         height: 110,
         backgroundColor: "#ffffff",
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-        borderBottomLeftRadius: 10,
-        borderBottomRightRadius: 10,
-        justifyContent: 'center'
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignSelf: 'center'
     },
     numberText: {
-        fontSize: 80,
+        fontSize: 50,
         color: '#8000FF',
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',
         alignSelf: "center",
+    },
+    buttonContainer: {
+        marginTop: 50,
+        width: 220,
+        alignSelf: 'center'
     }
 })
