@@ -30,13 +30,13 @@ export default function TherapistConsultation() {
         async function FetchName() {
             if (!ignore) {
                 const { data } = await supabase.from('ucs_therapists').select('username').eq('user_id', user.id);
-                //console.log(data)
+                //console.log(data);
                 setDoctorName(data[0].username);
             }
         }
 
         FetchName();
-    })
+    },[user])
 
     const [queue, setQueue] = useState(null);
 
