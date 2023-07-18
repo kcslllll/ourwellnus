@@ -9,10 +9,10 @@ import { supabase } from "../../lib/supabase";
 
 // disabled={(callUrl === '') ? true : false}
 
-export default function WaitingRoom() {
+export default function PhysicalWaitingRoom() {
     const router = useRouter();
     const { user } = useAuth();
-    const [callUrl, setcallUrl] = useState('');
+    const [chatPassword, setChatPassword] = useState('');
 
     const deleteUser = async () => {
         const { error } = await supabase.from('physical_queue').delete().eq('user_id', user.id)
@@ -45,10 +45,11 @@ export default function WaitingRoom() {
         );
     };
 
-    const handleJoinCall = async () => {
+    const handleJoinChat = async () => {
         // deletes user from the queue and bring them to the call page
         deleteUser();
-        router.push('/userCall');
+        //Linking.openURL(callUrl);
+        router.push('/physicalChat');
     };
 
     return (
@@ -57,27 +58,27 @@ export default function WaitingRoom() {
                 <View>
                     <Text style={styles.headerText}>Waiting Room</Text>
                     <Text style={styles.normalText}>
-                        The doctor is preparing for your consultation. An email with the call link will be sent to you shortly.
+                        The doctor is preparing for your consultation. An email with the chat room password will be sent to you shortly.
                     </Text>
-                    <Text style={styles.normalText}>Call URL:</Text>
+                    <Text style={styles.normalText}>Chat Room Password:</Text>
                 </View>
             </TouchableWithoutFeedback>
             <TextInput
                 style={styles.input}
-                value={callUrl}
-                onChangeText={setcallUrl}
-                placeholder="Paste your link here"
+                value={chatPassword}
+                onChangeText={setChatPassword}
+                placeholder="Paste password here"
                 multiline={true}
             />
             <Button
                 mode='contained'
                 style={styles.firstButton}
-                onPress={handleJoinCall}
+                onPress={handleJoinChat}
                 labelStyle={{ fontSize: 18 }}
-                disabled={(callUrl === '') ? true : false}
+                disabled={(chatPassword === '') ? true : false}
                
             >
-                Join Call
+                Join Chat
             </Button>
             <Button
                 mode='contained'

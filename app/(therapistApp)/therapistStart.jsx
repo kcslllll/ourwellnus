@@ -82,7 +82,7 @@ export default function TherapistStart() {
             <Pressable style={styles.backContainer} onPressIn={() => router.back()}>
                 <Ionicons name="chevron-back-circle-outline" size={40} color="black" />
             </Pressable>
-            <Text style={styles.headerText}>Virtual Consultations</Text>
+            <Text style={styles.headerText}>Mental Health Consultation</Text>
             <Text style={styles.subheaderText}>Patient Information:</Text>
             <Text style={styles.normalText}>Name:</Text>
             <View style={styles.infoContainer}>
@@ -96,8 +96,17 @@ export default function TherapistStart() {
             <View style={styles.infoContainer}>
                 <Text style={{ paddingHorizontal: 10 }}>{patientIssue}</Text>
             </View>
-            <Link href='/therapistCall' asChild>
-                <Button mode='contained' onPress={handleStartCall} style={styles.startContainer} labelStyle={{ fontSize: 18 }}>Start Call</Button>
+            <Link
+                href={{
+                    pathname: '/therapistChat',
+                    params: {
+                        patientName: patientName,
+                    }
+                }} asChild 
+            >
+                <Button mode='contained' onPress={handleStartCall} style={styles.startContainer} labelStyle={{ fontSize: 18 }}>
+                    Start Chat
+                </Button>
             </Link>
         </SafeAreaView>
     )
@@ -112,11 +121,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10
     },
     headerText: {
-        marginTop: 60,
-        fontSize: 34,
+        marginTop: 30,
+        fontSize: 40,
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',
-        alignSelf: 'center'
+        textAlign: 'center',
     },
     subheaderText: {
         marginTop: 70,

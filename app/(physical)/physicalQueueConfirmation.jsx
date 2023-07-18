@@ -79,7 +79,7 @@ export default function PhysicalQueueConfirmation() {
         // Listens for notifications in the foreground
         notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
             // Redirects user to the Waiting Room
-            router.replace('/waitingRoom');
+            router.replace('/physicalWaitingRoom');
             console.log(notification);
 
         });
@@ -87,7 +87,7 @@ export default function PhysicalQueueConfirmation() {
         // Listens for interactions with notifications in fore/background
         responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
             // When user taps on the notification, direct user to Waiting Room
-            router.replace('/waitingRoom');
+            router.replace('/physicalWaitingRoom');
             console.log(response);
         });
 

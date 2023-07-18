@@ -3,12 +3,12 @@ import { StyleSheet, Text } from "react-native";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 
-export default function UserCall() {
+export default function MentalEndChat() {
     const router = useRouter();
 
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <Text style={styles.headerText}>Your call has ended!</Text>
+            <Text style={styles.headerText}>Your consultation has ended!</Text>
             <Text style={styles.normalText}>
                 Hope you had a fruitful experience! We are always here to lend a ear.
             </Text>
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16
     },
     headerText: {
-        marginTop: 270,
+        marginTop: 260,
         fontSize: 36,
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',

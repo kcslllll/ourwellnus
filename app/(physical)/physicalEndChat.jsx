@@ -3,12 +3,12 @@ import { StyleSheet, Text } from "react-native";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 
-export default function UserCall() {
+export default function PhysicalEndChat() {
     const router = useRouter();
 
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <Text style={styles.headerText}>Your call has ended!</Text>
+            <Text style={styles.headerText}>Your consultation has ended!</Text>
             <Text style={styles.normalText}>
                 Thank you for using Our WellNUS. Before you go, do remember to book a specific time slot for you to collect your medication, if necessary.
             </Text>
