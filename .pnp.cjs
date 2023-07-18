@@ -4870,7 +4870,7 @@ const RAW_RUNTIME_STATE =
           ["@react-native-community/cli-tools", "npm:10.1.1"],\
           ["chalk", "npm:4.1.2"],\
           ["execa", "npm:1.0.0"],\
-          ["fast-xml-parser", "npm:4.2.5"],\
+          ["fast-xml-parser", "npm:4.2.6"],\
           ["glob", "npm:7.2.3"],\
           ["ora", "npm:5.4.1"]\
         ],\
@@ -4883,7 +4883,7 @@ const RAW_RUNTIME_STATE =
           ["@react-native-community/cli-tools", "npm:10.1.1"],\
           ["chalk", "npm:4.1.2"],\
           ["execa", "npm:1.0.0"],\
-          ["fast-xml-parser", "npm:4.2.5"],\
+          ["fast-xml-parser", "npm:4.2.6"],\
           ["glob", "npm:7.2.3"],\
           ["ora", "npm:5.4.1"]\
         ],\
@@ -5511,10 +5511,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@supabase/gotrue-js", [\
-      ["npm:2.42.0", {\
-        "packageLocation": "../.yarn/berry/cache/@supabase-gotrue-js-npm-2.42.0-95310786a1-10c0.zip/node_modules/@supabase/gotrue-js/",\
+      ["npm:2.44.0", {\
+        "packageLocation": "../.yarn/berry/cache/@supabase-gotrue-js-npm-2.44.0-ae22835d87-10c0.zip/node_modules/@supabase/gotrue-js/",\
         "packageDependencies": [\
-          ["@supabase/gotrue-js", "npm:2.42.0"],\
+          ["@supabase/gotrue-js", "npm:2.44.0"],\
           ["cross-fetch", "npm:3.1.8"]\
         ],\
         "linkType": "HARD"\
@@ -5558,7 +5558,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@supabase/supabase-js", "npm:2.26.0"],\
           ["@supabase/functions-js", "npm:2.1.2"],\
-          ["@supabase/gotrue-js", "npm:2.42.0"],\
+          ["@supabase/gotrue-js", "npm:2.44.0"],\
           ["@supabase/postgrest-js", "npm:1.7.2"],\
           ["@supabase/realtime-js", "npm:2.7.3"],\
           ["@supabase/storage-js", "npm:2.5.1"],\
@@ -6809,7 +6809,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["browserslist", "npm:4.21.9"],\
           ["caniuse-lite", "npm:1.0.30001516"],\
-          ["electron-to-chromium", "npm:1.4.461"],\
+          ["electron-to-chromium", "npm:1.4.463"],\
           ["node-releases", "npm:2.0.13"],\
           ["update-browserslist-db", "virtual:f6128308c12e2b37fe427262226a88e213eb66128b3445db14a7af8a6dafb815a9c4562e232b574e216fb796ee19313d71844b195e41ad82170480289a6b575c#npm:1.0.11"]\
         ],\
@@ -7944,10 +7944,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["electron-to-chromium", [\
-      ["npm:1.4.461", {\
-        "packageLocation": "../.yarn/berry/cache/electron-to-chromium-npm-1.4.461-e08e4e4a93-10c0.zip/node_modules/electron-to-chromium/",\
+      ["npm:1.4.463", {\
+        "packageLocation": "../.yarn/berry/cache/electron-to-chromium-npm-1.4.463-e75da4d50f-10c0.zip/node_modules/electron-to-chromium/",\
         "packageDependencies": [\
-          ["electron-to-chromium", "npm:1.4.461"]\
+          ["electron-to-chromium", "npm:1.4.463"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -8100,7 +8100,7 @@ const RAW_RUNTIME_STATE =
           ["is-regex", "npm:1.1.4"],\
           ["is-shared-array-buffer", "npm:1.0.2"],\
           ["is-string", "npm:1.0.7"],\
-          ["is-typed-array", "npm:1.1.10"],\
+          ["is-typed-array", "npm:1.1.12"],\
           ["is-weakref", "npm:1.0.2"],\
           ["object-inspect", "npm:1.12.3"],\
           ["object-keys", "npm:1.1.1"],\
@@ -8116,7 +8116,7 @@ const RAW_RUNTIME_STATE =
           ["typed-array-byte-offset", "npm:1.0.0"],\
           ["typed-array-length", "npm:1.0.4"],\
           ["unbox-primitive", "npm:1.0.2"],\
-          ["which-typed-array", "npm:1.1.10"]\
+          ["which-typed-array", "npm:1.1.11"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -9298,10 +9298,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["fast-xml-parser", [\
-      ["npm:4.2.5", {\
-        "packageLocation": "../.yarn/berry/cache/fast-xml-parser-npm-4.2.5-342a3689c5-10c0.zip/node_modules/fast-xml-parser/",\
+      ["npm:4.2.6", {\
+        "packageLocation": "../.yarn/berry/cache/fast-xml-parser-npm-4.2.6-507b2f39db-10c0.zip/node_modules/fast-xml-parser/",\
         "packageDependencies": [\
-          ["fast-xml-parser", "npm:4.2.5"],\
+          ["fast-xml-parser", "npm:4.2.6"],\
           ["strnum", "npm:1.0.5"]\
         ],\
         "linkType": "HARD"\
@@ -10431,7 +10431,7 @@ const RAW_RUNTIME_STATE =
           ["is-array-buffer", "npm:3.0.2"],\
           ["call-bind", "npm:1.0.2"],\
           ["get-intrinsic", "npm:1.2.1"],\
-          ["is-typed-array", "npm:1.1.10"]\
+          ["is-typed-array", "npm:1.1.12"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10825,15 +10825,11 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["is-typed-array", [\
-      ["npm:1.1.10", {\
-        "packageLocation": "../.yarn/berry/cache/is-typed-array-npm-1.1.10-fe4ef83cdc-10c0.zip/node_modules/is-typed-array/",\
+      ["npm:1.1.12", {\
+        "packageLocation": "../.yarn/berry/cache/is-typed-array-npm-1.1.12-6135c91b1a-10c0.zip/node_modules/is-typed-array/",\
         "packageDependencies": [\
-          ["is-typed-array", "npm:1.1.10"],\
-          ["available-typed-arrays", "npm:1.0.5"],\
-          ["call-bind", "npm:1.0.2"],\
-          ["for-each", "npm:0.3.3"],\
-          ["gopd", "npm:1.0.1"],\
-          ["has-tostringtag", "npm:1.0.0"]\
+          ["is-typed-array", "npm:1.1.12"],\
+          ["which-typed-array", "npm:1.1.11"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11890,7 +11886,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "../.yarn/berry/cache/metro-minify-terser-npm-0.73.10-c08d6fe269-10c0.zip/node_modules/metro-minify-terser/",\
         "packageDependencies": [\
           ["metro-minify-terser", "npm:0.73.10"],\
-          ["terser", "npm:5.19.0"]\
+          ["terser", "npm:5.19.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -13866,7 +13862,7 @@ const RAW_RUNTIME_STATE =
           ["scheduler", "npm:0.23.0"],\
           ["stacktrace-parser", "npm:0.1.10"],\
           ["use-sync-external-store", "virtual:0701b905b58f6feda942bb38834abeaa71f636809087626ef2708a3ef3db9a2510b59f0d5bcf00feb6bc80c0c7cc5b8d34bbfc762c75d8a093887520825707ff#npm:1.2.0"],\
-          ["whatwg-fetch", "npm:3.6.2"],\
+          ["whatwg-fetch", "npm:3.6.16"],\
           ["ws", "virtual:0701b905b58f6feda942bb38834abeaa71f636809087626ef2708a3ef3db9a2510b59f0d5bcf00feb6bc80c0c7cc5b8d34bbfc762c75d8a093887520825707ff#npm:6.2.2"]\
         ],\
         "packagePeers": [\
@@ -15790,10 +15786,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["terser", [\
-      ["npm:5.19.0", {\
-        "packageLocation": "../.yarn/berry/cache/terser-npm-5.19.0-0e40ff70a0-10c0.zip/node_modules/terser/",\
+      ["npm:5.19.1", {\
+        "packageLocation": "../.yarn/berry/cache/terser-npm-5.19.1-38ae651ca9-10c0.zip/node_modules/terser/",\
         "packageDependencies": [\
-          ["terser", "npm:5.19.0"],\
+          ["terser", "npm:5.19.1"],\
           ["@jridgewell/source-map", "npm:0.3.5"],\
           ["acorn", "npm:8.10.0"],\
           ["commander", "npm:2.20.3"],\
@@ -16072,7 +16068,7 @@ const RAW_RUNTIME_STATE =
           ["typed-array-buffer", "npm:1.0.0"],\
           ["call-bind", "npm:1.0.2"],\
           ["get-intrinsic", "npm:1.2.1"],\
-          ["is-typed-array", "npm:1.1.10"]\
+          ["is-typed-array", "npm:1.1.12"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -16085,7 +16081,7 @@ const RAW_RUNTIME_STATE =
           ["call-bind", "npm:1.0.2"],\
           ["for-each", "npm:0.3.3"],\
           ["has-proto", "npm:1.0.1"],\
-          ["is-typed-array", "npm:1.1.10"]\
+          ["is-typed-array", "npm:1.1.12"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -16099,7 +16095,7 @@ const RAW_RUNTIME_STATE =
           ["call-bind", "npm:1.0.2"],\
           ["for-each", "npm:0.3.3"],\
           ["has-proto", "npm:1.0.1"],\
-          ["is-typed-array", "npm:1.1.10"]\
+          ["is-typed-array", "npm:1.1.12"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -16111,7 +16107,7 @@ const RAW_RUNTIME_STATE =
           ["typed-array-length", "npm:1.0.4"],\
           ["call-bind", "npm:1.0.2"],\
           ["for-each", "npm:0.3.3"],\
-          ["is-typed-array", "npm:1.1.10"]\
+          ["is-typed-array", "npm:1.1.12"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -16473,8 +16469,8 @@ const RAW_RUNTIME_STATE =
           ["inherits", "npm:2.0.4"],\
           ["is-arguments", "npm:1.1.1"],\
           ["is-generator-function", "npm:1.0.10"],\
-          ["is-typed-array", "npm:1.1.10"],\
-          ["which-typed-array", "npm:1.1.10"]\
+          ["is-typed-array", "npm:1.1.12"],\
+          ["which-typed-array", "npm:1.1.11"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -16618,10 +16614,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["whatwg-fetch", [\
-      ["npm:3.6.2", {\
-        "packageLocation": "../.yarn/berry/cache/whatwg-fetch-npm-3.6.2-4bdf324792-10c0.zip/node_modules/whatwg-fetch/",\
+      ["npm:3.6.16", {\
+        "packageLocation": "../.yarn/berry/cache/whatwg-fetch-npm-3.6.16-1acb62ac0e-10c0.zip/node_modules/whatwg-fetch/",\
         "packageDependencies": [\
-          ["whatwg-fetch", "npm:3.6.2"]\
+          ["whatwg-fetch", "npm:3.6.16"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -16691,16 +16687,15 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["which-typed-array", [\
-      ["npm:1.1.10", {\
-        "packageLocation": "../.yarn/berry/cache/which-typed-array-npm-1.1.10-9bdacffb41-10c0.zip/node_modules/which-typed-array/",\
+      ["npm:1.1.11", {\
+        "packageLocation": "../.yarn/berry/cache/which-typed-array-npm-1.1.11-f37f0cefe2-10c0.zip/node_modules/which-typed-array/",\
         "packageDependencies": [\
-          ["which-typed-array", "npm:1.1.10"],\
+          ["which-typed-array", "npm:1.1.11"],\
           ["available-typed-arrays", "npm:1.0.5"],\
           ["call-bind", "npm:1.0.2"],\
           ["for-each", "npm:0.3.3"],\
           ["gopd", "npm:1.0.1"],\
-          ["has-tostringtag", "npm:1.0.0"],\
-          ["is-typed-array", "npm:1.1.10"]\
+          ["has-tostringtag", "npm:1.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
