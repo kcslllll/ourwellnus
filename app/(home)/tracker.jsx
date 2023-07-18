@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList, TextInput, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from "../../contexts/auth";
+import { supabase } from "../../lib/supabase";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -12,30 +16,37 @@ Notifications.setNotificationHandler({
 });
 
 const MedicationTracker = () => {
+  const navigation = useNavigation();
   const [medications, setMedications] = useState([]);
   const [medicationName, setMedicationName] = useState('');
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [selectedTime, setSelectedTime] = useState(new Date());
   const [frequency, setFrequency] = useState('once');
-  const notificationListener = useRef();
-  const responseListener = useRef();
 
   useEffect(() => {
     registerForPushNotificationsAsync();
 
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log(notification);
-    });
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
-    });
+    Notifications.addNotificationReceivedListener(handleNotificationReceived);
 
     return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
+      Notifications.removeNotificationReceivedListener(handleNotificationReceived);
     };
   }, []);
+
+  const params = useLocalSearchParams();
+  const router = useRouter();
+  const {user} = useAuth();
+
+  const mediCollection = async () => {
+      // log user inputs
+      setLoading(true);
+      const { error } = await supabase.from('medication_tracker').insert({ user_id: user.id, name: medicationName, time: selectedTime, frequency: frequency });
+      setLoading(false);
+      if (error) {
+          console.log(error.message);
+          return;
+      }
+  }
 
   const registerForPushNotificationsAsync = async () => {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -51,6 +62,10 @@ const MedicationTracker = () => {
     }
   };
 
+  const handleNotificationReceived = (notification) => {
+    console.log(notification);
+  };
+
   const showTimePickerModal = () => {
     setShowTimePicker(true);
   };
@@ -60,7 +75,7 @@ const MedicationTracker = () => {
   };
 
   const handleTimeChange = (event, selected) => {
-    if (selected) {
+    if (event.type === 'set' && selected) {
       setSelectedTime(selected);
     }
   };
@@ -76,18 +91,17 @@ const MedicationTracker = () => {
     setMedications([...medications, newMedication]);
     setMedicationName('');
     setSelectedTime(new Date());
-    setFrequency('once');
 
-    // Schedule local notifications for the medication times
     scheduleMedicationNotifications(newMedication);
   };
 
-  const deleteMedication = id => {
-    const updatedMedications = medications.filter(medication => medication.id !== id);
+  const deleteMedication = async (id) => {
+    const updatedMedications = medications.filter((medication) => medication.id !== id);
     setMedications(updatedMedications);
+    await cancelScheduledNotificationAsync(id);
   };
 
-  const scheduleMedicationNotifications = medication => {
+  const scheduleMedicationNotifications = (medication) => {
     if (medication.frequency === 'once') {
       scheduleNotification(medication, medication.time);
     } else if (medication.frequency === 'twice') {
@@ -105,18 +119,19 @@ const MedicationTracker = () => {
     }
   };
 
-  const scheduleNotification = (medication, time) => {
+  const scheduleNotification = async (medication, time) => {
+    const identifier = medication.id;
     const notificationTime = new Date(time);
-    Notifications.scheduleNotificationAsync({
+    const schedulingOptions = {
       content: {
         title: 'Medication Reminder',
-        body: `It's time to take your medication: ${medication.name}`,
+        body: `It's time to take your medication!`,
+        data: { medicationId: medication.id },
       },
-      trigger: {
-        date: notificationTime,
-        repeats: medication.frequency !== 'once',
-      },
-    });
+      trigger: { date: notificationTime },
+    };
+
+    await Notifications.scheduleNotificationAsync(schedulingOptions);
   };
 
   const renderItem = ({ item }) => (
@@ -130,18 +145,18 @@ const MedicationTracker = () => {
     </View>
   );
 
+  useEffect(() => {
+    navigation.setOptions({ headerShown: false });
+  }, []);
+
   return (
     <SafeAreaView style={styles.pageContainer}>
       <View style={styles.container}>
         <View style={styles.trackerContainer}>
           <Text style={styles.trackerText}>Medication Tracker</Text>
           <View style={styles.inputContainer}>
-            <Text>Medication Name:</Text>
-            <TextInput
-              style={styles.input}
-              value={medicationName}
-              onChangeText={setMedicationName}
-            />
+            <Text>Medication Name (Dosage):</Text>
+            <TextInput style={styles.input} value={medicationName} onChangeText={setMedicationName} />
             <Text>Time:</Text>
             <TouchableOpacity style={styles.timePickerButton} onPress={showTimePickerModal}>
               <Text style={styles.timePickerButtonText}>{selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
@@ -149,30 +164,34 @@ const MedicationTracker = () => {
             <Text>Frequency:</Text>
             <TouchableOpacity
               style={styles.frequencyButton}
-              onPress={() => setFrequency(prevFrequency => {
-                if (prevFrequency === 'once') return 'twice';
-                if (prevFrequency === 'twice') return 'thrice';
-                return 'once';
-              })}
+              onPress={() =>
+                setFrequency((prevFrequency) => {
+                  if (prevFrequency === 'once') return 'twice';
+                  if (prevFrequency === 'twice') return 'thrice';
+                  return 'once';
+                })
+              }
             >
-              <Text style={styles.frequencyButtonText}>
-                {frequency === 'once' ? 'Once a Day' : frequency === 'twice' ? 'Twice a Day' : 'Thrice a Day'}
-              </Text>
+              <Text style={styles.frequencyButtonText}>{frequency === 'once' ? 'Once a Day' : frequency === 'twice' ? 'Twice a Day' : 'Thrice a Day'}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.addButton} onPress={addMedication}>
               <Text style={styles.addButtonText}>Add Medication</Text>
             </TouchableOpacity>
-            {showTimePicker && (
+          </View>
+          {showTimePicker && (
+            <View style={styles.timePickerContainer}>
               <DateTimePicker
                 value={selectedTime}
                 mode="time"
                 is24Hour={false}
                 display="spinner"
                 onChange={handleTimeChange}
-                minimumDate={new Date()}
               />
-            )}
-          </View>
+              <TouchableOpacity style={styles.confirmButton} onPress={hideTimePickerModal}>
+                <Text style={styles.confirmButtonText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          )}
           <FlatList
             data={medications}
             renderItem={renderItem}
@@ -287,6 +306,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  timePickerContainer: {
+    flex: 1,
+  },
+  confirmButton: {
+    backgroundColor: 'blue',
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  confirmButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default MedicationTracker;
+
