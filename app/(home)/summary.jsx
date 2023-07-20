@@ -46,10 +46,8 @@ export default function SummaryPage() {
   },)
 
   const refreshSummaryPage = () => {
-    const latestHistoryLog = '10 May 2023 8.47pm: Physical Health Consultation';
-    const latestStatus = 'In progress';
+    const latestHistoryLog = '';
     setHistoryLog(latestHistoryLog);
-    setStatus(latestStatus);
   };
 
   useEffect(() => {
@@ -75,8 +73,8 @@ export default function SummaryPage() {
           <Text style={styles.summaryText}>Summary</Text>
         </View>
         <View style={styles.headerContainer}>
-          <MaterialCommunityIcons name="clock-outline" size={20} color="orange" style={styles.timeIcon} />
-          <Text style={styles.historyHeader}>History Log</Text>
+        <MaterialCommunityIcons name="check-circle-outline" size={20} color="green" style={styles.tickIcon} />
+          <Text style={styles.trackerHeader}>Medication Tracker</Text>
         </View>
 
         <View style={styles.logContainer}>
@@ -100,18 +98,6 @@ export default function SummaryPage() {
 
         <View style={styles.separator} />
 
-        <View style={styles.headerContainer}>
-          <View style={styles.iconContainer}>
-            <MaterialCommunityIcons name="check-circle-outline" size={20} color="green" style={styles.tickIcon} />
-          </View>
-          <Text style={styles.statusHeader}>Status for Medication Collection</Text>
-        </View>
-
-        <View style={styles.statusContainer}>
-          <Text style={[styles.statusText, status === 'In progress' && styles.inProgressText]}>
-            {status}
-          </Text>
-        </View>
         <Button
         onPress={() => supabase.auth.signOut()}
         labelStyle={styles.buttonLabel}
@@ -173,7 +159,7 @@ const styles = StyleSheet.create({
     marginTop: 100,
     borderRadius: 5,
   },
-  statusHeader: {
+  trackerHeader: {
     color: 'green',
     fontSize: 17,
     fontWeight: 'bold',
