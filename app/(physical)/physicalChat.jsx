@@ -1,15 +1,31 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, View, Text } from "react-native";
 import { Button } from "react-native-paper";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { GiftedChat } from 'react-native-gifted-chat';
 import { useState, useEffect, useCallback } from "react";
+import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../contexts/auth";
 
 export default function PhysicalChat() {
     const router = useRouter();
+    const { user } = useAuth();
+    const params = useLocalSearchParams();
 
     const [messages, setMessages] = useState([])
     const [chatName, setChatName] = useState('Doctor Name');
+
+    useEffect(() => {
+        // fetch doctor name from rooms table
+        /*async function fetchDoctor() {
+            const { data, error } = await supabase.rpc('get_room_owner', {room_id: params.roomId});
+            if (error) {
+                console.log(error.message);
+            } else {
+                setChatName(data.name)
+            }
+        }*/
+    })
 
     useEffect(() => {
         setMessages([
@@ -22,7 +38,7 @@ export default function PhysicalChat() {
                     name: 'Doctor Lee',
                 },
             },
-        ])
+        ]);
     }, [])
 
     const onSend = useCallback((messages = []) => {
@@ -32,7 +48,14 @@ export default function PhysicalChat() {
     }, [])
 
     const handleLeaveChat = async () => {
+        // delete user from the room in room_participants table
+        const {error} = await supabase.from('room_participants').delete().eq('user_id', user.id);
+        if (error) {
+            console.log(error.message);
+            return;
+        }
         router.push("/physicalEndChat");
+        return;
     }
 
     return (
@@ -53,8 +76,6 @@ export default function PhysicalChat() {
                     }}
                 />
             </View>
- 
-
         </SafeAreaView>
     )
 }
