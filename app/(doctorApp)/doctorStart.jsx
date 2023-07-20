@@ -9,7 +9,7 @@ import { supabase } from "../../lib/supabase";
 
 export default function DoctorStart() {
     const router = useRouter();
-    const [patientId, setPatientId] = useState(null)
+    const [patientId, setPatientId] = useState(null);
     const [patientName, setPatientName] = useState('');
     const [patientEmail, setPatientEmail] = useState('');
 
@@ -54,12 +54,16 @@ export default function DoctorStart() {
         fetchPatientName();
         fetchPatientEmail();
     }, [patientId])
-
-    const handleStartCall = async () => {
+        
+    const handleStartChat = async () => {
         // should do the following:
-        // create room for call and join call automatically
-        // send call URL to patient's email
-
+        // create a chat room and join chat automatically
+        // add patient as participant of the room
+        const { error } = await supabase.rpc('create_chat_room');
+        if (error) {
+            console.log(error.message);
+            return;
+        }
     }
 
     return (
@@ -82,10 +86,11 @@ export default function DoctorStart() {
                     pathname: '/doctorChat',
                     params: {
                         patientName: patientName,
+                        patientId: patientId
                     }
                 }} asChild 
             >
-                <Button mode='contained' onPress={handleStartCall} style={styles.startContainer} labelStyle={{ fontSize: 18 }}>
+                <Button mode='contained' onPress={handleStartChat} style={styles.startContainer} labelStyle={{ fontSize: 18 }}>
                     Start Chat
                 </Button>
             </Link>

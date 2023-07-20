@@ -4,12 +4,17 @@ import { Button } from "react-native-paper";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { GiftedChat } from 'react-native-gifted-chat';
 import { useState, useEffect, useCallback } from "react";
+import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../contexts/auth";
 
 export default function DoctorChat() {
+    const { user } = useAuth();
     const router = useRouter();
     const params = useLocalSearchParams();
 
     const [messages, setMessages] = useState([]);
+    const [roomId, setRoomId] = useState(null);
+    const [patientInvited, setPatientInvited] = useState(false);
 
     useEffect(() => {
         setMessages([
@@ -31,8 +36,51 @@ export default function DoctorChat() {
         )
     }, [])
 
+    useEffect(() => {
+        async function fetchRoomId() {
+            const {data, error} = await supabase.from('room_participants').select('room_id').eq('user_id', user.id);
+            if (error) {
+                console.log(error.message);
+                return;
+            } 
+            if (data.length === 0) {
+                //console.log('data is empty');
+                return;
+            } else {
+                //console.log(data);
+                setRoomId(data[0].room_id);
+                return;
+            }
+        }
+        fetchRoomId();
+    },[user.id, router])
+
+    const handleInvitePatient = async () => {
+        // Adds patient as one of the room participants
+        const { error } = await supabase
+            .from('room_participants')
+            .insert({room_id: roomId, user_id: params.patientId})
+        if (error) {
+            console.log(error.message);
+            return;
+        }
+        setPatientInvited(true);
+        return;
+    }
+
     const handleLeaveChat = async () => {
-        router.push("/doctorConsultation");
+        // delete room from rooms table
+        const { error } = await supabase
+            .from('rooms')
+            .delete()
+            .eq('room_owner_id', user.id)
+        if (error) {
+            console.log(error.message);
+            return;
+        } else {
+            router.push("/doctorConsultation");
+            return;
+        }
     }
 
     const handleVideoSession = async () => {
@@ -42,16 +90,20 @@ export default function DoctorChat() {
     return (
         <SafeAreaView style={styles.pageContainer}>
             <View style={styles.headerContainer}>
-                <Button textColor="white" onPress={handleLeaveChat}>
-                    Leave Chat
+                <Button 
+                    textColor="white" 
+                    onPress={handleInvitePatient} 
+                    disabled={patientInvited ? true : false}
+                >
+                    Invite Patient
                 </Button>
                 <Button textColor="white" onPress={handleVideoSession}>
                     Start Video-session
                 </Button>
             </View>
-            <Text style={styles.chatNameText}>{ params.patientName }</Text>
+            <Text style={styles.chatNameText}>{params.patientName}</Text>
             <View style={styles.messageContainer}>
-            <GiftedChat
+                <GiftedChat
                     messages={messages}
                     onSend={messages => onSend(messages)}
                     user={{
@@ -60,8 +112,9 @@ export default function DoctorChat() {
                     }}
                 />
             </View>
- 
-
+            <Button textColor="white" onPress={handleLeaveChat} labelStyle={{fontSize: 20}} style={styles.leaveButton}>
+                    Leave Chat
+            </Button>
         </SafeAreaView>
     )
 }
@@ -87,6 +140,9 @@ const styles = StyleSheet.create({
     },
     messageContainer: {
         backgroundColor: '#e9d3ff',
-        height: 615
+        height: 590
+    },
+    leaveButton: {
+        marginTop: 10
     }
 })
