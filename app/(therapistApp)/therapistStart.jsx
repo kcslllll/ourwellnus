@@ -72,9 +72,13 @@ export default function TherapistStart() {
 
     const handleStartCall = async () => {
         // should do the following:
-        // create room for call and join call automatically
-        // send call URL to patient's email
-
+        // create a chat room and join chat automatically
+        // add patient as participant of the room
+        const { error } = await supabase.rpc('create_chat_room');
+        if (error) {
+            console.log(error.message);
+            return;
+        }
     }
 
     return (
@@ -101,6 +105,7 @@ export default function TherapistStart() {
                     pathname: '/therapistChat',
                     params: {
                         patientName: patientName,
+                        patientId: patientId
                     }
                 }} asChild 
             >
