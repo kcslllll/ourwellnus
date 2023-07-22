@@ -1,8 +1,8 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Alert, StyleSheet, Text, TextInput, Keyboard, TouchableWithoutFeedback, View } from "react-native";
-import { useState } from "react";
+import { Alert, StyleSheet, Text, View } from "react-native";
+import { useState, useEffect } from "react";
 import { Button } from "react-native-paper";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../contexts/auth";
 
@@ -11,7 +11,49 @@ import { useAuth } from "../../contexts/auth";
 export default function MentalWaitingRoom() {
     const { user } = useAuth();
     const router = useRouter();
-    const [chatPassword, setChatPassword] = useState('');
+
+    const [isReady, setIsReady] = useState(false);
+    const [statusText, setStatusText] = useState('');
+    const [roomId, setRoomId] = useState(null);
+
+    useEffect(() => {
+        // checks if user is invited into any chat room
+        async function fetchRoomId() {
+            const { data } = await supabase.from('room_participants')
+                .select('room_id')
+                .eq('user_id', user.id)
+            if (data.length !== 0) {
+                console.log(roomId);
+                setRoomId(data[0].room_id)
+            }
+        }
+        fetchRoomId();
+    })
+
+    useEffect(() => {
+        const subscription = supabase
+            .channel('any')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: `room_participants` }, payload => {
+                if (payload.new.user_id == user.id) {
+                    console.log('Added into room!', payload);
+                    setIsReady(true);
+                }
+            })
+            .subscribe();
+
+        return (() => {
+            supabase.removeChannel(subscription);
+        })
+    }, [])
+
+    useEffect(() => {
+        // Status text changes to inform user of their current situation
+        if (!isReady) {
+            setStatusText('Any minute now! Your doctor is still preparing for your consultation.');
+        } else {
+            setStatusText('All set! You may proceed to join the chat room for your consultation by clicking on the "Join Chat" button.');
+        }
+    }, [isReady])
 
     const deleteUser = async () => {
         const { error } = await supabase.from('mental_queue').delete().eq('user_id', user.id)
@@ -44,40 +86,31 @@ export default function MentalWaitingRoom() {
         );
     };
 
-    const handleJoinChat = async () => {
-        // deletes user from the queue and bring them to the call page
-        deleteUser();
-        router.push('/mentalChat');
-    };
-
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-                <View>
-                    <Text style={styles.headerText}>Waiting Room</Text>
-                    <Text style={styles.normalText}>
-                        The doctor is preparing for your consultation. An email with the call room password will be sent to you shortly.
-                    </Text>
-                    <Text style={styles.normalText}>Chat Room Password:</Text>
-                </View>
-            </TouchableWithoutFeedback>
-            <TextInput
-                style={styles.input}
-                value={chatPassword}
-                onChangeText={setChatPassword}
-                placeholder="Paste password here"
-                multiline={true}
-            />
-            <Button
-                mode='contained'
-                style={styles.firstButton}
-                onPress={handleJoinChat}
-                labelStyle={{ fontSize: 18 }}
-                disabled={(chatPassword === '') ? true : false}
-               
+            <Text style={styles.headerText}>Waiting Room</Text>
+            <Text style={styles.normalText}>Your Current Status:</Text>
+            <View style={styles.roundedRectangle}>
+                <Text style={isReady ? styles.ready : styles.inProgress}>{statusText}</Text>
+            </View>
+            <Link
+                href={{
+                    pathname: '/mentalChat',
+                    params: {
+                        roomId: roomId
+                    }
+                }} asChild
             >
-                Join Chat
-            </Button>
+                <Button
+                    mode='contained'
+                    style={styles.firstButton}
+                    onPress={() => deleteUser()}
+                    labelStyle={{ fontSize: 18 }}
+                    disabled={isReady ? false : true}
+                >
+                    Join Chat
+                </Button>
+            </Link>
             <Button
                 mode='contained'
                 style={styles.secondButton}
@@ -94,28 +127,27 @@ const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,
         backgroundColor: '#e9d3ff',
-        paddingHorizontal: 20
+        paddingHorizontal: 10
     },
     headerText: {
-        marginTop: 40,
+        marginTop: 70,
         fontSize: 40,
         fontWeight: 'bold',
         fontFamily: 'Trebuchet MS',
         textAlign: 'center',
     },
     normalText: {
-        marginTop: 50,
+        marginTop: 70,
         fontSize: 16,
         fontWeight: '300',
         fontFamily: 'Trebuchet MS',
     },
-    input: {
+    roundedRectangle: {
         marginTop: 10,
-        height: 150,
-        borderWidth: 1,
+        height: 200,
+        backgroundColor: "#ffffff",
         borderRadius: 10,
-        padding: 10,
-        backgroundColor: "#FFFFFF",
+        justifyContent: 'center'
     },
     firstButton: {
         marginTop: 115,
@@ -124,7 +156,23 @@ const styles = StyleSheet.create({
     },
     secondButton: {
         width: 200,
-        marginTop: 15,
+        marginTop: 20,
         alignSelf: 'center',
     },
+    inProgress: {
+        // red
+        fontSize: 18,
+        color: 'red',
+        fontFamily: 'Trebuchet MS',
+        alignSelf: "center",
+        paddingHorizontal: 10,
+    },
+    ready: {
+        // green 
+        fontSize: 18,
+        color: '#1DBA36',
+        fontFamily: 'Trebuchet MS',
+        alignSelf: "center",
+        paddingHorizontal: 10,
+    }
 })

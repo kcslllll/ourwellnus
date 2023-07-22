@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Alert, StyleSheet, Text, View, ScrollView, RefreshControl } from "react-native";
-import { useCallback, useEffect, useState } from "react";
+import { Alert, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
 import { Link, useRouter } from "expo-router";
 import { useAuth } from "../../contexts/auth";
@@ -12,35 +12,42 @@ export default function PhysicalWaitingRoom() {
 
     const [isReady, setIsReady] = useState(false);
     const [statusText, setStatusText] = useState('');
-    const [refreshing, setRefreshing] = useState(false);
     const [roomId, setRoomId] = useState(null);
 
-    const onRefresh = useCallback(() => {
-        setRefreshing(true);
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 1000);
-    }, []);
-
     useEffect(() => {
-        async function fetchReady() {
+        // checks if user is invited into any chat room
+        async function fetchRoomId() {
             const { data } = await supabase.from('room_participants')
                 .select('room_id')
                 .eq('user_id', user.id)
-            if (data.length === 0) {
-                setIsReady(false);
-            } else {
-                //console.log(data);
+            if (data.length !== 0) {
+                console.log(roomId);
                 setRoomId(data[0].room_id)
-                setIsReady(true);
             }
         }
-        fetchReady();
-    }, [user.id, refreshing])
+        fetchRoomId();
+    })
 
     useEffect(() => {
+        const subscription = supabase
+            .channel('any')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: `room_participants` }, payload => {
+                if (payload.new.user_id == user.id) {
+                    console.log('Added into room!', payload);
+                    setIsReady(true);
+                }
+            })
+            .subscribe();
+
+        return (() => {
+            supabase.removeChannel(subscription);
+        })
+    }, [])
+
+    useEffect(() => {
+        // Status text changes to inform user of their current situation
         if (!isReady) {
-            setStatusText('Any minute now! Your doctor is still preparing for your consultation, do refresh for updates.');
+            setStatusText('Any minute now! Your doctor is still preparing for your consultation');
         } else {
             setStatusText('All set! You may proceed to join the chat room for your consultation by clicking on the "Join Chat" button.');
         }
@@ -77,55 +84,40 @@ export default function PhysicalWaitingRoom() {
         );
     };
 
-    const handleJoinChat = async () => {
-        // deletes user from the queue
-        deleteUser();
-    };
-
     return (
         <SafeAreaView style={styles.pageContainer}>
-            <ScrollView
-                contentContainerStyle={styles.pageContainer}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }
+            <Text style={styles.headerText}>Waiting Room</Text>
+            <Text style={styles.normalText}>Your Current Status:</Text>
+            <View style={styles.roundedRectangle}>
+                <Text style={isReady ? styles.ready : styles.inProgress}>{statusText}</Text>
+            </View>
+            <Link
+                href={{
+                    pathname: '/physicalChat',
+                    params: {
+                        roomId: roomId
+                    }
+                }} asChild
             >
-                <Text style={styles.headerText}>Waiting Room</Text>
-                <Text style={styles.normalText}>Your Current Status:</Text>
-                <View style={styles.roundedRectangle}>
-                    <Text style={isReady ? styles.ready : styles.inProgress}>{statusText}</Text>
-                </View>
-                <Link
-                    href={{
-                        pathname: '/physicalChat',
-                        params: {
-                            roomId: roomId
-                        }
-                    }} asChild
-                >
-                    <Button
-                        mode='contained'
-                        style={styles.firstButton}
-                        onPress={handleJoinChat}
-                        labelStyle={{ fontSize: 18 }}
-                        disabled={isReady ? false : true}
-
-                    >
-                        Join Chat
-                    </Button>
-                </Link>
                 <Button
                     mode='contained'
-                    style={styles.secondButton}
-                    onPress={handleLeaveRoom}
+                    style={styles.firstButton}
+                    onPress={() => deleteUser()}
                     labelStyle={{ fontSize: 18 }}
+                    disabled={isReady ? false : true}
+
                 >
-                    Leave Room
+                    Join Chat
                 </Button>
-            </ScrollView>
+            </Link>
+            <Button
+                mode='contained'
+                style={styles.secondButton}
+                onPress={handleLeaveRoom}
+                labelStyle={{ fontSize: 18 }}
+            >
+                Leave Room
+            </Button>
         </SafeAreaView>
     )
 }

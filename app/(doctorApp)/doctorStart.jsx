@@ -58,7 +58,6 @@ export default function DoctorStart() {
     const handleStartChat = async () => {
         // should do the following:
         // create a chat room and join chat automatically
-        // add patient as participant of the room
         const { error } = await supabase.rpc('create_chat_room');
         if (error) {
             console.log(error.message);

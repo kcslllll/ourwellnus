@@ -16,33 +16,32 @@ export default function DoctorChat() {
     const [roomId, setRoomId] = useState(null);
     const [patientInvited, setPatientInvited] = useState(false);
 
-    useEffect(() => {
-        setMessages([
-            {
-                _id: 1,
-                text: 'Hello developer',
-                createdAt: new Date(),
-                user: {
-                    _id: 2,
-                    name: 'Doctor Lee',
-                },
-            },
-        ])
-    }, [])
+    function mapUser(userId) {
+        //reformats user object from supabase to GiftedChat
+        return {
+            _id: userId,
+            avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJQbBE6lkySTbbqKaKE3C9x8kv5Fnevtao4eXj2y8AJ5d6zJCyTvOkoUdiagFdoQt6H40&usqp=CAU://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJQbBE6lkySTbbqKaKE3C9x8kv5Fnevtao4eXj2y8AJ5d6zJCyTvOkoUdiagFdoQt6H40&usqp=CAU'
+        };
+    }
 
-    const onSend = useCallback((messages = []) => {
-        setMessages(previousMessages =>
-            GiftedChat.append(previousMessages, messages),
-        )
-    }, [])
+    function mapMessages(message) {
+        //reformats message object from supabase to GiftedChat
+        //console.log(message)
+        return {
+            _id: message.message_id,
+            text: message.content,
+            createdAt: new Date(message.created_at),
+            user: mapUser(message.user_id),
+        };
+    }
 
     useEffect(() => {
         async function fetchRoomId() {
-            const {data, error} = await supabase.from('room_participants').select('room_id').eq('user_id', user.id);
+            const { data, error } = await supabase.from('room_participants').select('room_id').eq('user_id', user.id);
             if (error) {
                 console.log(error.message);
                 return;
-            } 
+            }
             if (data.length === 0) {
                 //console.log('data is empty');
                 return;
@@ -53,13 +52,69 @@ export default function DoctorChat() {
             }
         }
         fetchRoomId();
-    },[user.id, router])
+    }, [router])
+
+    useEffect(() => {
+        // fetch all messages from that specifc room
+        const fetchMessages = async () => {
+            const { data } = await supabase
+                .from('messages')
+                .select('*')
+                .eq('room_id', roomId)
+                .order('created_at', { ascending: false });
+            if (!data) {
+                console.log('no messages');
+                return;
+            }
+            //console.log(messages);
+            setMessages(data.map(message => mapMessages(message)));
+        }
+        fetchMessages();
+    }, [roomId])
+
+    useEffect(() => {
+        // subscribe to changes in messages table
+        const subscription = supabase
+            .channel('any')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: `messages` }, payload => {
+                console.log('Change received!');
+                if (payload.new.room_id == roomId) {
+                    setMessages(previousMessages =>
+                        GiftedChat.append(previousMessages, mapMessages(payload.new)),
+                    );
+                }
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(subscription);
+        }
+    }, [roomId])
+
+    const onSend = useCallback((newMessage = []) => {
+        //Inserts new message into supabase
+        const insert = async () => {
+            const { error } = await supabase
+                .from('messages')
+                .insert({
+                    room_id: roomId,
+                    user_id: user.id,
+                    content: newMessage[0].text
+                })
+            if (error) {
+                console.log(error.message);
+                return;
+            }
+            return;
+        }
+        insert();
+    }, [roomId, user.id])
 
     const handleInvitePatient = async () => {
         // Adds patient as one of the room participants
         const { error } = await supabase
             .from('room_participants')
-            .insert({room_id: roomId, user_id: params.patientId})
+            .insert({ room_id: roomId, user_id: params.patientId })
         if (error) {
             console.log(error.message);
             return;
@@ -90,9 +145,9 @@ export default function DoctorChat() {
     return (
         <SafeAreaView style={styles.pageContainer}>
             <View style={styles.headerContainer}>
-                <Button 
-                    textColor="white" 
-                    onPress={handleInvitePatient} 
+                <Button
+                    textColor="white"
+                    onPress={handleInvitePatient}
                     disabled={patientInvited ? true : false}
                 >
                     Invite Patient
@@ -105,15 +160,12 @@ export default function DoctorChat() {
             <View style={styles.messageContainer}>
                 <GiftedChat
                     messages={messages}
-                    onSend={messages => onSend(messages)}
-                    user={{
-                        _id: 1,
-                        name: 'doctor'
-                    }}
+                    onSend={newMessage => onSend(newMessage)}
+                    user={mapUser(user.id)}
                 />
             </View>
-            <Button textColor="white" onPress={handleLeaveChat} labelStyle={{fontSize: 20}} style={styles.leaveButton}>
-                    Leave Chat
+            <Button textColor="white" onPress={handleLeaveChat} labelStyle={{ fontSize: 20 }} style={styles.leaveButton}>
+                Leave Chat
             </Button>
         </SafeAreaView>
     )
