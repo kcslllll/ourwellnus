@@ -74,7 +74,7 @@ export default function PhysicalQueueConfirmation() {
     useEffect(() => {
         // Register device for push notifications
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-        console.log(expoPushToken);
+        //console.log(expoPushToken);
 
         // Listens for notifications in the foreground
         notificationListener.current = Notifications.addNotificationReceivedListener(notification => {

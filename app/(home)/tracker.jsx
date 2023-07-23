@@ -54,7 +54,6 @@ const MedicationTracker = () => {
   };
 
   const renderItem = ({ item }, index) => {
-    
     return (
       <View style={styles.medicationContainer} key={index}>
         <Text style={styles.medicationText}>{item.medication_name}</Text>
@@ -161,4 +160,3 @@ const styles = StyleSheet.create({
 });
 
 export default MedicationTracker;
-

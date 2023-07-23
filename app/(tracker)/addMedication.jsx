@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Text, StyleSheet, TouchableOpacity, Pressable, View } from 'react-native';
-import { useState } from "react";
+import { Text, StyleSheet, TouchableOpacity, Pressable, View, Alert } from 'react-native';
+import { useRef, useState } from "react";
 import { Button, TextInput } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -9,6 +9,7 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../contexts/auth";
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import { useEffect } from "react";
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -18,75 +19,112 @@ Notifications.setNotificationHandler({
     }),
 });
 
+async function registerForPushNotificationsAsync() {
+    let token;
+
+    /* For android devices
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }*/
+
+    if (Device.isDevice) {
+        // check current notification permission status
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+            // permission for notifications not granted, request for permission
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+        }
+        if (finalStatus !== 'granted') {
+            // final permission still not granted
+            Alert.alert('Failed to get push token for push notification!');
+            return;
+        }
+        token = (await Notifications.getExpoPushTokenAsync()).data;
+        console.log(token);
+    } else {
+        Alert.alert('Must use physical device for Push Notifications');
+    }
+
+    return token;
+}
+
 export default function AddMedication() {
     const router = useRouter();
-    const {user} = useAuth();
+    const { user } = useAuth();
 
     const [medicationName, setMedicationName] = useState(null);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [selectedTime, setSelectedTime] = useState(new Date());
     const [frequency, setFrequency] = useState('once');
-
-    // schedules push notifications
-    async function schedulePushNotification() {
-        const trigger = selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: "It is your turn!",
-                body: 'Your doctor is waiting for you, please return to Our WellNUS app now.',
-                sound: 'default'
-            },
-            trigger: {
-                seconds: 2
-            },
-        });
-    }
-    
-      const scheduleMedicationNotifications = (medication) => {
-        if (medication.frequency === 'once') {
-          scheduleNotification(medication, medication.time);
-        } else if (medication.frequency === 'twice') {
-          const firstTime = new Date(medication.time);
-          const secondTime = new Date(firstTime.getTime() + 12 * 60 * 60 * 1000);
-          scheduleNotification(medication, firstTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-          scheduleNotification(medication, secondTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-        } else if (medication.frequency === 'thrice') {
-          const firstTime = new Date(medication.time);
-          const secondTime = new Date(firstTime.getTime() + 8 * 60 * 60 * 1000);
-          const thirdTime = new Date(firstTime.getTime() + 16 * 60 * 60 * 1000);
-          scheduleNotification(medication, firstTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-          scheduleNotification(medication, secondTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-          scheduleNotification(medication, thirdTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-        }
-      };
-    
-      const scheduleNotification = async (medication, time) => {
-        const identifier = medication.id;
-        const notificationTime = new Date(time);
-        const schedulingOptions = {
-          content: {
-            title: 'Medication Reminder',
-            body: `It's time to take your medication!`,
-            data: { medicationId: medication.id },
-          },
-          trigger: { date: notificationTime },
-        };
-    
-        await Notifications.scheduleNotificationAsync(schedulingOptions);
-      };
-    
+    const [hour, setHour] = useState(null);
+    const [minute, setMinute] = useState(null);
+    const [expoPushToken, setExpoPushToken] = useState('');
+    const notificationListener = useRef();
 
     // when time has been selected in the time picker
     const handleTimeChange = (event, selected) => {
         if (event.type === 'set' && selected) {
             setSelectedTime(selected);
+            setHour(Number(selectedTime.toLocaleTimeString("en-US", { hour12: false }).slice(0, 2)));
+            setMinute(Number(selectedTime.toLocaleTimeString("en-US", { hour12: false }).slice(3, 5)));
         }
+    };
+
+    useEffect(() => {
+        // Register device for push notifications
+        registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+        console.log(expoPushToken);
+
+        // Listens for notifications in the foreground
+        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+            console.log(notification);
+        });
+    }, []);
+
+    // schedules push notifications
+    async function schedulePushNotification(hour, minute) {
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "Time to take your medication!",
+                sound: 'default'
+            },
+            trigger: {
+                hour: hour,
+                minute: minute,
+                repeats: true
+            },
+        });
+        console.log('notification scheduled');
+    }
+
+    const scheduleMedicationNotifications = async () => {
+        if (frequency == 'once') {
+            schedulePushNotification(hour, minute);
+            return;
+        } else if (frequency == 'twice') {
+            schedulePushNotification(hour, minute);
+            schedulePushNotification((hour + 12), minute);
+            return;
+        } else if (frequency == 'thrice') {
+            schedulePushNotification(hour, minute);
+            schedulePushNotification((hour + 8), minute);
+            schedulePushNotification((hour + 16), minute);
+            return;
+        }
+        return;
     };
 
     const handleAddMedication = async () => {
         // insert input variables into database
         // schedule push notifications
-        const {error} = await supabase
+        const { error } = await supabase
             .from('medication_tracker')
             .insert({
                 user_id: user.id,
@@ -100,6 +138,7 @@ export default function AddMedication() {
             return;
         }
 
+        scheduleMedicationNotifications();
         router.replace('/tracker');
         return;
     };
@@ -155,10 +194,10 @@ export default function AddMedication() {
                 </Text>
             </TouchableOpacity>
 
-            <Button 
-                mode='contained' 
-                style={styles.addMedButton} 
-                labelStyle={{ fontSize: 18 }} 
+            <Button
+                mode='contained'
+                style={styles.addMedButton}
+                labelStyle={{ fontSize: 18 }}
                 onPress={handleAddMedication}
             >
                 Add Medication
