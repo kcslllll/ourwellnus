@@ -1,5 +1,5 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Linking, Alert } from "react-native";
 import { Button } from "react-native-paper";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { GiftedChat } from 'react-native-gifted-chat';
@@ -139,7 +139,31 @@ export default function DoctorChat() {
     }
 
     const handleVideoSession = async () => {
+        // Alerts doctor that he needs to come back to leave chat
+        //Insert system message to inform patient doctor is creating video session
+        //Redirects doctor to zoom
+        const systemMessage = [{
+            text: 'Doctor is starting video session...'
+        }];
 
+        Alert.alert(
+            'You will now be redirected to Zoom...',
+            'You may return this chat room to share the meeting information. Do remember to leave this chat room after the video session!',
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {
+                    text: 'OK', 
+                    onPress: () => {
+                        onSend(systemMessage);
+                        Linking.openURL('https://zoom.us/signin#/login');
+                    },
+                },
+            ]
+        );
     }
 
     return (
