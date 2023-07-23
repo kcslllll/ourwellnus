@@ -56,7 +56,7 @@ const MedicationTracker = () => {
     return (
       <View style={styles.medicationContainer}>
         <Text style={styles.medicationText}>{item.medication_name}</Text>
-        <Text style={styles.medicationText}>Time: {item.reminder_time}</Text>
+        <Text style={styles.medicationText}>Time for first take: {item.reminder_time}</Text>
         <Text style={styles.medicationText}>
           Frequency: {
             item.frequency === 'once' ? 'Once a Day'
