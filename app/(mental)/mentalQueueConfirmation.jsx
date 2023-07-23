@@ -149,7 +149,7 @@ export default function MentalQueueConfirmation() {
                     .eq('doctor_chosen', param.shorterQ)
                     .lt('joined_at', joinTime);
                 if (data !== null) {
-                    console.log(data);
+                    //console.log(data);
                     setPosition(data.length + 1);
                 }
             }

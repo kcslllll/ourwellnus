@@ -23,7 +23,7 @@ export default function MentalWaitingRoom() {
                 .select('room_id')
                 .eq('user_id', user.id)
             if (data.length !== 0) {
-                console.log(roomId);
+                //console.log(roomId);
                 setRoomId(data[0].room_id)
             }
         }

@@ -5,6 +5,7 @@ import { useAuth } from "../../contexts/auth";
 import { supabase } from "../../lib/supabase";
 import { useRouter } from "expo-router";
 import { Button } from 'react-native-paper';
+import { useIsFocused } from '@react-navigation/native';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -17,6 +18,7 @@ Notifications.setNotificationHandler({
 const MedicationTracker = () => {
   const router = useRouter();
   const { user } = useAuth();
+  const isFocused = useIsFocused();
 
   const [medications, setMedications] = useState([]);
   const [isDeleted, setIsDeleted] = useState(false);
@@ -37,11 +39,11 @@ const MedicationTracker = () => {
     fetchMedications();
 
     return () => setIsDeleted(false);
-  }, [isDeleted])
+  }, [isDeleted, isFocused])
 
   const deleteMedication = async (medicationId) => {
     // delete medication from database
-    const {error} = await supabase.from('medication_tracker').delete().eq('id', medicationId);
+    const {error} = await supabase.from('medication_tracker').delete().eq('medication_id', medicationId);
     if (error) {
       console.log(error.message);
       return;
@@ -51,10 +53,10 @@ const MedicationTracker = () => {
     return;
   };
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item }, index) => {
     
     return (
-      <View style={styles.medicationContainer}>
+      <View style={styles.medicationContainer} key={index}>
         <Text style={styles.medicationText}>{item.medication_name}</Text>
         <Text style={styles.medicationText}>Time for first take: {item.reminder_time}</Text>
         <Text style={styles.medicationText}>
@@ -65,7 +67,7 @@ const MedicationTracker = () => {
                 : 'Thrice a Day'
           }
         </Text>
-        <TouchableOpacity style={styles.deleteButton} onPress={() => deleteMedication(item.id)}>
+        <TouchableOpacity style={styles.deleteButton} onPress={() => deleteMedication(item.medication_id)}>
           <Text style={styles.deleteButtonText}>Delete</Text>
         </TouchableOpacity>
       </View>
@@ -80,7 +82,9 @@ const MedicationTracker = () => {
         <FlatList
           data={medications}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => {
+            return  index.toString();
+          }}
           style={styles.medicationList}
         />
       </View>

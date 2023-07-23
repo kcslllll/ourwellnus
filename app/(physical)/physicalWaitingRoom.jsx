@@ -26,7 +26,7 @@ export default function PhysicalWaitingRoom() {
             }
         }
         fetchRoomId();
-    })
+    },[router])
 
     useEffect(() => {
         const subscription = supabase
