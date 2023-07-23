@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 10,
     position: 'relative',
+    justifyContent:'space-between'
   },
   profileButton: {
     position: 'absolute',
