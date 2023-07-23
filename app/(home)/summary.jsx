@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { Button } from 'react-native-paper';
 import { Header } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/auth';
 
 export default function SummaryPage() {
   const navigation = useNavigation();
-  const router = useRouter();
   const { user } = useAuth();
 
   useEffect(() => {
