@@ -43,16 +43,16 @@ export default function TherapistChat() {
                 return;
             }
             if (data.length === 0) {
-                //console.log('data is empty');
+                console.log('data is empty');
                 return;
             } else {
-                //console.log(data);
+                console.log(data);
                 setRoomId(data[0].room_id);
                 return;
             }
         }
-        fetchRoomId();
-    }, [user.id, router])
+        setTimeout(() => fetchRoomId(), 500);
+    }, [])
 
     useEffect(() => {
         // fetch all messages from that specifc room
@@ -69,7 +69,7 @@ export default function TherapistChat() {
             //console.log(messages);
             setMessages(data.map(message => mapMessages(message)));
         }
-        fetchMessages();
+        fetchMessages
     }, [roomId])
 
     useEffect(() => {
@@ -89,7 +89,7 @@ export default function TherapistChat() {
         return () => {
             supabase.removeChannel(subscription);
         }
-    }, [])
+    }, [roomId])
 
     const onSend = useCallback((newMessage = []) => {
         //Inserts new message into supabase
@@ -108,7 +108,7 @@ export default function TherapistChat() {
             return;
         }
         insert();
-    }, [])
+    }, [user.id, roomId])
 
     const handleInvitePatient = async () => {
         // Adds patient as one of the room participants

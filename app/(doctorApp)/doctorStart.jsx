@@ -12,6 +12,7 @@ export default function DoctorStart() {
     const [patientId, setPatientId] = useState(null);
     const [patientName, setPatientName] = useState('');
     const [patientEmail, setPatientEmail] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function fetchPatientId() {
@@ -54,15 +55,18 @@ export default function DoctorStart() {
         fetchPatientName();
         fetchPatientEmail();
     }, [patientId])
-        
+
     const handleStartChat = async () => {
         // should do the following:
         // create a chat room and join chat automatically
+        setLoading(true);
         const { error } = await supabase.rpc('create_chat_room');
+        setLoading(false);
         if (error) {
             console.log(error.message);
             return;
         }
+        return;
     }
 
     return (
@@ -82,12 +86,12 @@ export default function DoctorStart() {
             </View>
             <Link
                 href={{
-                    pathname: '/doctorChat',
+                    pathname:'/doctorChat',
                     params: {
                         patientName: patientName,
                         patientId: patientId
                     }
-                }} asChild 
+                }} asChild
             >
                 <Button mode='contained' onPress={handleStartChat} style={styles.startContainer} labelStyle={{ fontSize: 18 }}>
                     Start Chat
