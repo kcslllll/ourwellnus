@@ -25,23 +25,24 @@ export default function SummaryPage() {
 
   useEffect(() => {
     async function fetchTimeSlot() {
-      try {
-        const { data } = await supabase.from('self_pick_up_collection')
+        const { data, error } = await supabase.from('self_pick_up_collection')
           .select('date_chosen, time_chosen')
           .eq('user_id', user.id);
 
-        setTimeSlot('Booked: ' + data[0].date_chosen + ' ' + data[0].time_chosen);
-      } catch (e) {
-        console.log(e.message);
-        setTimeSlot('You have not booked any slots.');
-      }
+        if (error) {
+          console.log(error.message);
+          setTimeSlot('You have not booked any slots.');
+          return;
+        }
+        if (data[0].time_chosen < Date.now()) {
+          setTimeSlot('You have missed: ' + data[0].date_chosen + ' ' + data[0].time_chosen + '. Please book another slot.')
+        } else {
+          setTimeSlot('You have booked: ' + data[0].date_chosen + ' ' + data[0].time_chosen);
+        }
+        return;
     }
-
-    if (isRefreshing === true) {
-      fetchTimeSlot();
-      return;
-    }
-  },)
+    fetchTimeSlot();
+  },[])
 
   const refreshSummaryPage = () => {
     const latestHistoryLog = '';
@@ -85,7 +86,7 @@ export default function SummaryPage() {
           <View style={styles.iconContainer}>
             <MaterialCommunityIcons name="clock-outline" size={20} color="#FC6C85" style={styles.tickIcon} />
           </View>
-          <Text style={styles.collectionHeader}>Time slot for medication collection</Text>
+          <Text style={styles.collectionHeader}>Medication Collection</Text>
         </View>
 
         <View style={styles.statusContainer}>
