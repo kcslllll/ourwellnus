@@ -17,7 +17,7 @@ export default function SPUCollection() {
     const currentDate = selected || selectedDate;
     const selectedDay = currentDate.getDay(); // Get the day of the week (0 = Sunday, 1 = Monday, etc.)
   
-    if (selectedDay === 0 || selectedDay === 6) {
+    if (selectedDay === 0 || selectedDay === 6 ) {
       // Check if the selected date is a Sunday or Saturday
       return; // Do not update the selected date
     }
@@ -61,6 +61,13 @@ export default function SPUCollection() {
       <View style={styles.modeContainer}>
         <Text style={styles.modeText}>Mode of collection: Self Pick-Up</Text>
       </View>
+      <Text style={styles.warningText}>
+        Please note that UHC is closed on {'\n'}
+        <Text style={styles.boldText}>weekends</Text>, 
+        and you will not be able to collect {'\n'}
+        your medication. Please do not book any {'\n'}
+        appointments on <Text style={styles.boldText}>weekends</Text>.
+      </Text>
       <Text style={styles.timePickerLabel}>Select date of collection:</Text>
       <DateTimePicker
         value={selectedDate}
@@ -72,6 +79,12 @@ export default function SPUCollection() {
         disabled={!isDateSelectable} // Disable the date picker if the date is not selectable
         disabledDates={[0, 6]} // Disable Sundays (0) and Saturdays (6)
       />
+      <Text style={styles.warningText}>
+      {'\n'}
+      If you are unable to select the date, please {'\n'}
+        click on another possible date and <Text style={styles.boldText}>reclick</Text> the {'\n'}
+        date you wish to book your appointment on. 
+      </Text>
       <View style={styles.timePickerContainer}>
         <Text style={styles.timePickerLabel}>Select a time:</Text>
         <RNPickerSelect
@@ -123,7 +136,6 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   headerText: {
-    marginTop: 20,
     fontSize: 40,
     fontWeight: "bold",
     fontFamily: "Trebuchet MS",
@@ -136,6 +148,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 30,
   },
+  boldText: {
+    fontWeight: 'bold',
+  },
   modeText: {
     fontSize: 18,
     color: "white",
@@ -143,14 +158,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
+  warningText: {
+    fontSize: 16,
+    color: "red",
+    textAlign: "center",
+  },
   timePickerContainer: {
-    marginTop: 20,
+    marginTop: 10,
     alignItems: "center",
   },
   timePickerLabel: {
     fontSize: 18,
     marginBottom: 10,
-    marginTop: 20,
+    marginTop: 15,
   },
   button: {
     marginTop: 60,
