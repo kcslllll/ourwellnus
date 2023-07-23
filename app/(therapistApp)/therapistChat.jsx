@@ -52,7 +52,7 @@ export default function TherapistChat() {
             }
         }
         fetchRoomId();
-    }, [router])
+    }, [user.id, router])
 
     useEffect(() => {
         // fetch all messages from that specifc room
@@ -89,7 +89,7 @@ export default function TherapistChat() {
         return () => {
             supabase.removeChannel(subscription);
         }
-    }, [roomId])
+    }, [])
 
     const onSend = useCallback((newMessage = []) => {
         //Inserts new message into supabase
@@ -108,7 +108,7 @@ export default function TherapistChat() {
             return;
         }
         insert();
-    }, [roomId, user.id])
+    }, [])
 
     const handleInvitePatient = async () => {
         // Adds patient as one of the room participants

@@ -83,7 +83,7 @@ export default function PhysicalChat() {
         return () => {
             supabase.removeChannel(subscription);
         }
-    }, [params.roomId])
+    }, [])
 
     const onSend = useCallback((newMessage = []) => {
         //Inserts new message into supabase

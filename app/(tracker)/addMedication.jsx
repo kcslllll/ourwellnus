@@ -22,7 +22,7 @@ export default function AddMedication() {
     const router = useRouter();
     const {user} = useAuth();
 
-    const [medicationName, setMedicationName] = useState('');
+    const [medicationName, setMedicationName] = useState(null);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [selectedTime, setSelectedTime] = useState(new Date());
     const [frequency, setFrequency] = useState('once');
@@ -117,37 +117,12 @@ export default function AddMedication() {
                 value={medicationName}
                 onChangeText={setMedicationName} />
 
-            <Text style={styles.secondText}>Time for first reminder:</Text>
+            <Text style={styles.secondText}>Time for reminder:</Text>
             <TouchableOpacity style={styles.componentButton} onPress={() => setShowTimePicker(true)}>
                 <Text style={styles.componentText}>
                     {selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Text>
             </TouchableOpacity>
-
-            <Text style={styles.secondText}>Frequency (in 8 hour intervals):</Text>
-            <TouchableOpacity
-                style={styles.componentButton}
-                onPress={() =>
-                    setFrequency((prevFrequency) => {
-                        if (prevFrequency === 'once') return 'twice';
-                        if (prevFrequency === 'twice') return 'thrice';
-                        return 'once';
-                    })
-                }
-            >
-                <Text style={styles.componentText}>
-                    {frequency === 'once' ? 'Once a Day' : frequency === 'twice' ? 'Twice a Day' : 'Thrice a Day'}
-                </Text>
-            </TouchableOpacity>
-
-            <Button 
-                mode='contained' 
-                style={styles.addMedButton} 
-                labelStyle={{ fontSize: 18 }} 
-                onPress={handleAddMedication}
-            >
-                Add Medication
-            </Button>
 
             {showTimePicker && (
                 <View style={styles.timePickerContainer}>
@@ -163,6 +138,32 @@ export default function AddMedication() {
                     </Button>
                 </View>
             )}
+
+            <Text style={styles.secondText}>Frequency:</Text>
+            <TouchableOpacity
+                style={styles.componentButton}
+                onPress={() =>
+                    setFrequency((prevFrequency) => {
+                        if (prevFrequency === 'once') return 'twice';
+                        if (prevFrequency === 'twice') return 'thrice';
+                        return 'once';
+                    })
+                }
+            >
+                <Text style={styles.componentText}>
+                    {frequency === 'once' ? 'Once a Day (24 hour interval)' : frequency === 'twice' ? 'Twice a Day (12 hour interval)' : 'Thrice a Day (8 hour interval)'}
+                </Text>
+            </TouchableOpacity>
+
+            <Button 
+                mode='contained' 
+                style={styles.addMedButton} 
+                labelStyle={{ fontSize: 18 }} 
+                onPress={handleAddMedication}
+            >
+                Add Medication
+            </Button>
+
         </SafeAreaView>
     );
 }
@@ -210,12 +211,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     addMedButton: {
-        marginTop: 10,
+        marginTop: 40,
         alignSelf: 'center',
         width: 200
     },
     timePickerContainer: {
-        height: '100%',
         backgroundColor: 'white',
         borderRadius: 10
     },

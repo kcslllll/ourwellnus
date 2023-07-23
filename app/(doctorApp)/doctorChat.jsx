@@ -52,7 +52,7 @@ export default function DoctorChat() {
             }
         }
         fetchRoomId();
-    }, [router])
+    }, [])
 
     useEffect(() => {
         // fetch all messages from that specifc room
@@ -89,7 +89,7 @@ export default function DoctorChat() {
         return () => {
             supabase.removeChannel(subscription);
         }
-    }, [roomId])
+    }, [])
 
     const onSend = useCallback((newMessage = []) => {
         //Inserts new message into supabase
