@@ -33,6 +33,7 @@ function HomeLayout() {
             />
           );
         },
+        headerShown: false,
       })}
     >
       <Tab.Screen name="summary" component={summary} />
