@@ -66,7 +66,6 @@ export default function AddMedication() {
     const [hour, setHour] = useState(null);
     const [minute, setMinute] = useState(null);
     const [expoPushToken, setExpoPushToken] = useState('');
-    const notificationListener = useRef();
 
     // when time has been selected in the time picker
     const handleTimeChange = (event, selected) => {
@@ -81,18 +80,14 @@ export default function AddMedication() {
         // Register device for push notifications
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
         console.log(expoPushToken);
-
-        // Listens for notifications in the foreground
-        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-            console.log(notification);
-        });
     }, []);
 
     // schedules push notifications
     async function schedulePushNotification(hour, minute) {
         await Notifications.scheduleNotificationAsync({
             content: {
-                title: "Time to take your medication!",
+                title: "Reminder",
+                body:'It is now time to take your medication!',
                 sound: 'default'
             },
             trigger: {

@@ -1,19 +1,10 @@
 import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList } from 'react-native';
-import * as Notifications from 'expo-notifications';
 import { useAuth } from "../../contexts/auth";
 import { supabase } from "../../lib/supabase";
 import { useRouter } from "expo-router";
 import { Button } from 'react-native-paper';
 import { useIsFocused } from '@react-navigation/native';
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
 
 const MedicationTracker = () => {
   const router = useRouter();
@@ -50,6 +41,7 @@ const MedicationTracker = () => {
     }
     setIsDeleted(true);
     // cancel all scheduled notifications
+    
     return;
   };
 
