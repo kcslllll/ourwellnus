@@ -7,6 +7,16 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/auth";
 import { Ionicons } from '@expo/vector-icons';
 
+/*                
+<TouchableOpacity style={styles.section}>
+    <View style={styles.subSection}>
+        <Text style={styles.subSectionTitle}>Prescribe Medication</Text>
+        <View style={styles.arrowBackground}>
+            <Ionicons name="arrow-forward" size={24} color="black" />
+        </View>
+    </View>
+</TouchableOpacity> */
+
 export default function DoctorHome() {
     const { user } = useAuth();
     const router = useRouter();
@@ -40,15 +50,6 @@ export default function DoctorHome() {
                 <TouchableOpacity style={styles.section} onPress={() => router.push('/doctorConsultation')}>
                     <View style={styles.subSection}>
                         <Text style={styles.subSectionTitle}>Start a Consultation</Text>
-                        <View style={styles.arrowBackground}>
-                            <Ionicons name="arrow-forward" size={24} color="black" />
-                        </View>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.section}>
-                    <View style={styles.subSection}>
-                        <Text style={styles.subSectionTitle}>Prescribe Medication</Text>
                         <View style={styles.arrowBackground}>
                             <Ionicons name="arrow-forward" size={24} color="black" />
                         </View>
