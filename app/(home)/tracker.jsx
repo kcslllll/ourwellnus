@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabase";
 import { useRouter } from "expo-router";
 import { Button } from 'react-native-paper';
 import { useIsFocused } from '@react-navigation/native';
+import { cancelAllScheduledNotificationsAsync } from 'expo-notifications';
 
 const MedicationTracker = () => {
   const router = useRouter();
@@ -41,7 +42,8 @@ const MedicationTracker = () => {
     }
     setIsDeleted(true);
     // cancel all scheduled notifications
-    
+    cancelAllScheduledNotificationsAsync();
+    console.log('Notification cancelled');
     return;
   };
 
