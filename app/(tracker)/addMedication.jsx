@@ -3,7 +3,7 @@ import { Text, StyleSheet, TouchableOpacity, Pressable, View, Alert, ActivityInd
 import { useState } from "react";
 import { Button, TextInput } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../contexts/auth";
@@ -68,6 +68,8 @@ export default function AddMedication() {
     const [minute, setMinute] = useState(null);
     const [expoPushToken, setExpoPushToken] = useState('');
     const [notificationId, setNotificationId] = useState([]);
+    const [isInserted, setIsInserted] = useState(false);
+    const [medicationId, setMedicationId] = useState(null);
 
     // when time has been selected in the time picker
     const handleTimeChange = (event, selected) => {
@@ -89,6 +91,26 @@ export default function AddMedication() {
         console.log(expoPushToken);
     }, []);
 
+    useEffect(() => {
+        // fetch medication id
+        async function fetchMedicationId() {
+            const { data } = await supabase
+                .from('medication_tracker')
+                .select('medication_id')
+                .match({
+                    medication_name: medicationName,
+                    user_id: user.id,
+                    frequency: frequency,
+                });
+
+            setMedicationId(data[0].medication_id);
+        }
+        if (isInserted) {
+            fetchMedicationId();
+            setIsInserted(false);
+        }
+    },[isInserted])
+
     // schedules push notifications
     async function schedulePushNotification(hour, minute) {
         const id = await Notifications.scheduleNotificationAsync({
@@ -104,28 +126,25 @@ export default function AddMedication() {
             },
         });
         console.log('Notification scheduled ' + id + ' at ' + hour + ':' + minute);
-        notificationId.push(id);
+        setNotificationId(notificationId.push(id));
         console.log(notificationId);
     }
 
     const scheduleMedicationNotifications = async () => {
         if (frequency == 'once') {
             schedulePushNotification(hour, minute);
-            return;
         } else if (frequency == 'twice') {
             let secondHour = null;
-
 
             schedulePushNotification(hour, minute);
 
             // schedule second notif
-            if ((hour + 12) > 24) {
+            if ((hour + 12) >= 24) {
                 secondHour = hour + 12 - 24;
             } else {
                 secondHour = hour + 12;
             }
             schedulePushNotification(secondHour, minute);
-            return;
         } else if (frequency == 'thrice') {
             let secondHour = null;
             let thirdHour = null;
@@ -134,22 +153,24 @@ export default function AddMedication() {
             schedulePushNotification(hour, minute);
 
             // schedule second notif
-            if ((hour + 8) > 24) {
+            if ((hour + 8) >= 24) {
                 secondHour = hour + 8 - 24;
             } else {
-                thirdHour = hour + 8;
+                secondHour = hour + 8;
             }
             schedulePushNotification(secondHour, minute);
 
             // schedule third notif
-            if ((hour + 16) > 24) {
+            if ((hour + 16) >= 24) {
                 thirdHour = hour + 16 - 24;
             } else {
                 thirdHour = hour + 16;
             }
             schedulePushNotification(thirdHour, minute);
-            return;
         }
+        console.log(medicationId);
+
+        // insert notif into database
         return;
     };
 
@@ -165,6 +186,7 @@ export default function AddMedication() {
                 reminder_time: selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 frequency: frequency
             })
+        setIsInserted(true);
         setLoading(false);
 
         if (error) {
@@ -173,7 +195,9 @@ export default function AddMedication() {
         }
 
         scheduleMedicationNotifications();
-        router.replace('/tracker');
+        setTimeout(() => {
+            router.replace('/tracker');
+        }, 5000)
         return;
     };
 
@@ -228,21 +252,14 @@ export default function AddMedication() {
                 </Text>
             </TouchableOpacity>
 
-            <Link href={{
-                pathname: '/tracker',
-                params: {
-                    notificationId: notificationId
-                }
-            }} asChild>
-                <Button
-                    mode='contained'
-                    style={styles.addMedButton}
-                    labelStyle={{ fontSize: 18 }}
-                    onPress={handleAddMedication}
-                >
-                    Add Medication
-                </Button>
-            </Link>
+            <Button
+                mode='contained'
+                style={styles.addMedButton}
+                labelStyle={{ fontSize: 18 }}
+                onPress={handleAddMedication}
+            >
+                Add Medication
+            </Button>
             {loading && <ActivityIndicator />}
         </SafeAreaView>
     );
