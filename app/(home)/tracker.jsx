@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList } from 'react-native';
 import { useAuth } from "../../contexts/auth";
 import { supabase } from "../../lib/supabase";
 import { useRouter } from "expo-router";
 import { Button } from 'react-native-paper';
 import { useIsFocused } from '@react-navigation/native';
-import { cancelAllScheduledNotificationsAsync } from 'expo-notifications';
+import { cancelScheduledNotificationAsync } from 'expo-notifications';
 
 const MedicationTracker = () => {
   const router = useRouter();
@@ -14,6 +14,7 @@ const MedicationTracker = () => {
 
   const [medications, setMedications] = useState([]);
   const [isDeleted, setIsDeleted] = useState(false);
+  const notifications = useRef([]);
 
   useEffect(() => {
     async function fetchMedications() {
@@ -34,16 +35,21 @@ const MedicationTracker = () => {
   }, [isDeleted, isFocused])
 
   const deleteMedication = async (medicationId) => {
-    // delete medication from database
-    const {error} = await supabase.from('medication_tracker').delete().eq('medication_id', medicationId);
-    if (error) {
-      console.log(error.message);
-      return;
+    // delete medication from database returning
+    // all notifications scheduled from that medication
+    const { data } = await supabase.rpc('get_notifications', {medication_id: medicationId})
+    if (data) {
+      notifications.current = data;
+      //console.log(notifications.current);
     }
     setIsDeleted(true);
     // cancel all scheduled notifications
-    cancelAllScheduledNotificationsAsync();
-    console.log('Notification cancelled');
+    while(notifications.current.length > 0) {
+      let identifier = notifications.current.pop();
+      cancelScheduledNotificationAsync(identifier);
+      console.log('notification cancelled: ' + identifier);
+    }
+    console.log(notifications.current);
     return;
   };
 
