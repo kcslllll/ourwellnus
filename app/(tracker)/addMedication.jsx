@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, StyleSheet, TouchableOpacity, Pressable, View, Alert, ActivityIndicator } from 'react-native';
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, TextInput } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -68,8 +68,7 @@ export default function AddMedication() {
     const [minute, setMinute] = useState(null);
     const [expoPushToken, setExpoPushToken] = useState('');
     const [notificationId, setNotificationId] = useState([]);
-    const [isInserted, setIsInserted] = useState(false);
-    const [medicationId, setMedicationId] = useState(null);
+    const medicationId = useRef(null);
 
     // when time has been selected in the time picker
     const handleTimeChange = (event, selected) => {
@@ -88,28 +87,23 @@ export default function AddMedication() {
     useEffect(() => {
         // Register device for push notifications
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-        console.log(expoPushToken);
+        //console.log(expoPushToken);
     }, []);
 
-    useEffect(() => {
-        // fetch medication id
-        async function fetchMedicationId() {
-            const { data } = await supabase
-                .from('medication_tracker')
-                .select('medication_id')
-                .match({
-                    medication_name: medicationName,
-                    user_id: user.id,
-                    frequency: frequency,
-                });
-
-            setMedicationId(data[0].medication_id);
+    async function fetchMedicationId() {
+        const { data } = await supabase
+            .from('medication_tracker')
+            .select('medication_id')
+            .match({
+                medication_name: medicationName,
+                user_id: user.id,
+                frequency: frequency,
+            });
+        if (data) {
+            //console.log(data);
+            medicationId.current = data[0].medication_id;
         }
-        if (isInserted) {
-            fetchMedicationId();
-            setIsInserted(false);
-        }
-    },[isInserted])
+    }
 
     // schedules push notifications
     async function schedulePushNotification(hour, minute) {
@@ -127,7 +121,7 @@ export default function AddMedication() {
         });
         console.log('Notification scheduled ' + id + ' at ' + hour + ':' + minute);
         setNotificationId(notificationId.push(id));
-        console.log(notificationId);
+        //console.log(notificationId);
     }
 
     const scheduleMedicationNotifications = async () => {
@@ -168,9 +162,21 @@ export default function AddMedication() {
             }
             schedulePushNotification(thirdHour, minute);
         }
-        console.log(medicationId);
+        // fetch medication id of newly added medication
+        await fetchMedicationId();
+        //console.log(medicationId);
 
-        // insert notif into database
+        // insert notification into database
+        const { error } = await supabase
+            .from('tracker_notifications')
+            .insert({
+                medication_id: medicationId.current,
+                notifications: notificationId,
+                user_id: user.id
+            });
+        if (error) {
+            console.log(error.message);
+        }
         return;
     };
 
@@ -186,7 +192,6 @@ export default function AddMedication() {
                 reminder_time: selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 frequency: frequency
             })
-        setIsInserted(true);
         setLoading(false);
 
         if (error) {
@@ -195,9 +200,7 @@ export default function AddMedication() {
         }
 
         scheduleMedicationNotifications();
-        setTimeout(() => {
-            router.replace('/tracker');
-        }, 5000)
+        router.replace('/tracker');
         return;
     };
 

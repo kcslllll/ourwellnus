@@ -80,7 +80,7 @@ export default function PhysicalQueueConfirmation() {
         notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
             // Redirects user to the Waiting Room
             router.replace('/physicalWaitingRoom');
-            console.log(notification);
+            //console.log(notification);
 
         });
 
