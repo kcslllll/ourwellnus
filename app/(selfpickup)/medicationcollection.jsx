@@ -16,7 +16,7 @@ export default function MedicationCollection() {
             console.log(error.message);
             return;
         }
-        console.log(data[0].medication_prescribed);
+        //console.log(data[0].medication_prescribed);
         if (data[0].medication_prescribed == null) {
             Alert.alert(
                 'Unable to proceed...',
