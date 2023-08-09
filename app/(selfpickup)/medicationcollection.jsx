@@ -1,15 +1,36 @@
-import { Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-//import { supabase } from "../../lib/supabase";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../contexts/auth";
 
 export default function MedicationCollection() {
     const router = useRouter();
+    const {user} = useAuth();
     
-    const handleSelectMode = () => {
-        router.push('/selfPickUp');
+    const handleSelectMode = async () => {
+        const { data, error } = await supabase.from('user_profile').select('medication_prescribed').eq('user_id', user.id);
+        if (error) {
+            console.log(error.message);
+            return;
+        }
+        console.log(data[0].medication_prescribed);
+        if (data[0].medication_prescribed == null) {
+            Alert.alert(
+                'Unable to proceed...',
+                'There is no medications prescribed for you that needs to be collected.',
+                [
+                    {
+                        text: 'OK',
+                    }
+                ]
+            )
+        } else {
+            router.push('/selfPickUp');
+        }
+        return;
     }
 
     return (

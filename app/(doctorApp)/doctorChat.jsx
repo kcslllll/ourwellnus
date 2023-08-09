@@ -133,8 +133,8 @@ export default function DoctorChat() {
             console.log(error.message);
             return;
         } else {
-            router.push("/doctorConsultation");
-            return;
+            router.push({ pathname: "/doctorEndChat", params: { patientId: params.patientId } });
+            return; 
         }
     }
 

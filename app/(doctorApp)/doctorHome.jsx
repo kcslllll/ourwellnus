@@ -96,20 +96,20 @@ const styles = StyleSheet.create({
         padding: 20,
         borderRadius: 10,
         marginBottom: 30
-      },
+    },
     subSection: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 10,
-      },
-      subSectionTitle: {
+    },
+    subSectionTitle: {
         flex: 1,
         fontSize: 18,
-      },
-      arrowBackground: {
+    },
+    arrowBackground: {
         backgroundColor: 'white',
         borderRadius: 7,
         padding: 5
-      },
+    },
 })
