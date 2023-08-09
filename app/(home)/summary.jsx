@@ -3,14 +3,17 @@ import { SafeAreaView, View, Text, StyleSheet, FlatList } from 'react-native';
 import { Button } from 'react-native-paper';
 import { Header } from 'react-native-elements';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/auth';
+import { TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function SummaryPage() {
   const navigation = useNavigation();
   const { user } = useAuth();
   const isFocused = useIsFocused();
+  const router = useRouter();
 
   useEffect(() => {
     navigation.setOptions({
@@ -35,13 +38,13 @@ export default function SummaryPage() {
       setMedications(data);
     }
     fetchMedications();
-  },[isFocused])
+  }, [isFocused])
 
   const renderMedication = ({ item }) => {
     return (
       <View key={item.medication_id} style={styles.itemContainer}>
         <Text style={styles.itemText}>
-          Take {item.medication_name} at {item.reminder_time} 
+          Take {item.medication_name} at {item.reminder_time}
           {
             item.frequency === 'once' ? ' once a day!'
               : item.frequency === 'twice'
@@ -70,7 +73,7 @@ export default function SummaryPage() {
       return;
     }
     fetchTimeSlot();
-  },[isFocused])
+  }, [isFocused])
 
   const renderTimeSlot = ({ item }, index) => {
     return (
@@ -78,6 +81,15 @@ export default function SummaryPage() {
         <Text style={styles.itemText}>
           Booked: {item.date_chosen} at {item.time_chosen}
         </Text>
+
+        <TouchableOpacity onPress={() => router.push(
+          {
+            pathname: '/collectionConfirmation', 
+            params: {date: item.date_chosen, time:item.time_chosen}
+          }
+        )}>
+          <Ionicons name="arrow-forward" size={24} color="black" />
+        </TouchableOpacity>
       </View>
     )
   }
@@ -92,12 +104,12 @@ export default function SummaryPage() {
           <Text style={styles.trackerHeader}>Medication Tracker</Text>
         </View>
 
-        <FlatList 
+        <FlatList
           style={styles.listContainer}
           data={medications}
           renderItem={renderMedication}
           keyExtractor={(item, index) => {
-            return  index.toString();
+            return index.toString();
           }}
         />
 
@@ -108,12 +120,12 @@ export default function SummaryPage() {
           <Text style={styles.collectionHeader}>Medication Collection</Text>
         </View>
 
-        <FlatList 
+        <FlatList
           style={styles.listContainer}
           data={timeSlot}
           renderItem={renderTimeSlot}
           keyExtractor={(item, index) => {
-            return  index.toString();
+            return index.toString();
           }}
         />
 
@@ -198,7 +210,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
-    flexDirection: 'column',
+    flexDirection: 'row',
     justifyContent: 'space-between',
   },
   itemText: {
