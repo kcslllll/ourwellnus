@@ -4,12 +4,6 @@ import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { Ionicons } from '@expo/vector-icons';
 
-/*  Forgot password
-<Link href="/forgotPassword" asChild>
-    <Button>Forgot Password?</Button>
-</Link>
-*/
-
 export default function DoctorLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

@@ -6,8 +6,6 @@ import { Link, useRouter } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../contexts/auth";
 
-// disabled={(callUrl === '') ? true : false}
-
 export default function MentalWaitingRoom() {
     const { user } = useAuth();
     const router = useRouter();
